@@ -1,5 +1,6 @@
 package ercanduman.newsapidemo.data.network
 
+import ercanduman.newsapidemo.BuildConfig
 import ercanduman.newsapidemo.data.network.model.NewsAPIResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -23,6 +24,6 @@ interface NewsAPI {
     @GET("top-headlines")
     suspend fun getArticles(
         @Query("q") searchQuery: String,
-        @Query("apiKey") apiKey: String
+        @Query("apiKey") apiKey: String = BuildConfig.APPLICATION_ID // TODO: 2/27/21 replace with API_KEY from build gradle
     ): Response<NewsAPIResponse>
 }
