@@ -29,28 +29,26 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
     }
 
     private fun handleApiData() = viewLifecycleOwner.lifecycleScope.launch {
-        viewModel.getApiEvent("android")
+        viewModel.getApiEvent(DEFAULT_SEARCH_QUERY)
 
         viewModel.apiEvent.collect { event ->
             when (event) {
+                is ApiEvent.Loading -> binding.progressBar.show()
                 is ApiEvent.Empty -> {
-                    showContent(false, "No data found.")
+                    showContent(message = getString(R.string.no_data_found))
                 }
                 is ApiEvent.Error -> {
-                    showContent(false, "Executed with error. ${event.message} ")
-                }
-                is ApiEvent.Loading -> {
-                    binding.progressBar.show()
+                    showContent(message = getString(R.string.execution_failure, event.message))
                 }
                 is ApiEvent.Success -> {
-                    showContent(true, "")
+                    showContent(true)
                     log("Article list size: ${event.data.size}")
                 }
             }
         }
     }
 
-    private fun showContent(contentAvailable: Boolean, errorMessage: String) {
+    private fun showContent(contentAvailable: Boolean = false, message: String = "") {
         binding.apply {
             progressBar.hide()
             if (contentAvailable) {
@@ -59,9 +57,12 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
             } else {
                 recyclerView.hide()
                 retryContent.show()
-                textViewError.text = errorMessage
+                textViewError.text = message
             }
         }
     }
 
+    companion object {
+        private const val DEFAULT_SEARCH_QUERY = "android"
+    }
 }
