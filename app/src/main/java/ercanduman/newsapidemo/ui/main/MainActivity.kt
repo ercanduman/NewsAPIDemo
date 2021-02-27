@@ -1,4 +1,4 @@
-package ercanduman.newsapidemo
+package ercanduman.newsapidemo.ui.main
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -7,6 +7,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import ercanduman.newsapidemo.R
 
 class MainActivity : AppCompatActivity() {
 
