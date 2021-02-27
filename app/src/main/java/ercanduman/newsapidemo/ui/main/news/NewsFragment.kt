@@ -9,6 +9,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.util.ApiEvent
+import ercanduman.newsapidemo.util.hide
+import ercanduman.newsapidemo.util.log
+import ercanduman.newsapidemo.util.show
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -30,16 +33,33 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
         viewModel.apiEvent.collect { event ->
             when (event) {
-                is ApiEvent.Empty -> { // Do nothing
+                is ApiEvent.Empty -> {
+                    showContent(false, "No data found.")
                 }
                 is ApiEvent.Error -> {
-                    // binding.textHome.text = "Executed with error. ${event.message} "
+                    showContent(false, "Executed with error. ${event.message} ")
                 }
                 is ApiEvent.Loading -> {
+                    binding.progressBar.show()
                 }
                 is ApiEvent.Success -> {
-                    // binding.textHome.text = "Executed succesfully. ${event.data.size} "
+                    showContent(true, "")
+                    log("Article list size: ${event.data.size}")
                 }
+            }
+        }
+    }
+
+    private fun showContent(contentAvailable: Boolean, errorMessage: String) {
+        binding.apply {
+            progressBar.hide()
+            if (contentAvailable) {
+                recyclerView.show()
+                retryContent.hide()
+            } else {
+                recyclerView.hide()
+                retryContent.show()
+                textViewError.text = errorMessage
             }
         }
     }
