@@ -20,7 +20,7 @@ interface NewsAPI {
      * @return NewsAPIResponse object with retrofit2.Response which then can be handled for success
      * or failure calls.
      */
-    @GET("everything")
+    @GET("top-headlines")
     suspend fun getArticles(
         @Query("q") searchQuery: String,
         @Query("apiKey") apiKey: String

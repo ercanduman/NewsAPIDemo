@@ -1,19 +1,15 @@
 package ercanduman.newsapidemo.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import ercanduman.newsapidemo.R
-import ercanduman.newsapidemo.data.di.AppModule
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = "MainActivity"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -27,12 +23,5 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        lifecycleScope.launchWhenCreated {
-            val result = AppModule.providesNewsAPI()
-                .getArticles("android", "apiKey")
-            Log.d(TAG, "onCreate: result: ${result.body()?.articles?.size}")
-            Log.d(TAG, "onCreate: result: ${result.errorBody()}")
-        }
     }
 }
