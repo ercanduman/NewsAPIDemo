@@ -1,9 +1,7 @@
 package ercanduman.newsapidemo.ui.main
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -11,15 +9,10 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
-import ercanduman.newsapidemo.data.network.NewsAPI
-import javax.inject.Inject
-
-private const val TAG = "MainActivity"
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
-    @Inject
-    lateinit var newsAPI: NewsAPI
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -33,11 +26,5 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
-
-        lifecycleScope.launchWhenCreated {
-            val result = newsAPI.getArticles("android", "apiKey")
-            Log.d(TAG, "onCreate: result: ${result.body()?.articles?.get(0)?.content}")
-            Log.d(TAG, "onCreate: result: ${result.body()?.articles?.get(0)?.publishedAt}")
-        }
     }
 }
