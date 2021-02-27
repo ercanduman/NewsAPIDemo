@@ -9,9 +9,12 @@ import ercanduman.newsapidemo.data.network.model.Article
  * @author ercan
  * @since  2/27/21
  */
-sealed class ApiEvent(val data: List<Article> = emptyList(), val message: String = "") {
-    class Success(data: List<Article>) : ApiEvent(data = data)
-    class Error(message: String) : ApiEvent(message = message)
+sealed class ApiEvent(
+    private val data: List<Article> = emptyList(),
+    private val message: String = ""
+) {
+    class Success(val data: List<Article>) : ApiEvent(data = data)
+    class Error(val message: String) : ApiEvent(message = message)
     object Empty : ApiEvent()
     object Loading : ApiEvent()
 }
