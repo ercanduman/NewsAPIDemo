@@ -24,6 +24,6 @@ interface NewsAPI {
     @GET("top-headlines")
     suspend fun getArticles(
         @Query("q") searchQuery: String,
-        @Query("apiKey") apiKey: String = BuildConfig.APPLICATION_ID // TODO: 2/27/21 replace with API_KEY from build gradle
+        @Query("apiKey") apiKey: String = BuildConfig.NEWS_API_KEY
     ): Response<NewsAPIResponse>
 }
