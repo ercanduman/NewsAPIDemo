@@ -33,12 +33,12 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                 is ApiEvent.Empty -> { // Do nothing
                 }
                 is ApiEvent.Error -> {
-                    binding.textHome.text = "Executed with error. ${event.message} "
+                    // binding.textHome.text = "Executed with error. ${event.message} "
                 }
                 is ApiEvent.Loading -> {
                 }
                 is ApiEvent.Success -> {
-                    binding.textHome.text = "Executed succesfully. ${event.data.size} "
+                    // binding.textHome.text = "Executed succesfully. ${event.data.size} "
                 }
             }
         }
