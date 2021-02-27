@@ -35,6 +35,9 @@ class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_
         fun bindData(article: Article) {
             binding.apply {
                 tvArticleTitle.text = article.title
+                tvArticleSource.text = article.source.name
+                tvArticleDescription.text = article.description
+                tvArticlePublishedAt.text = article.publishedAt
 
                 Glide.with(binding.root)
                     .load(article.urlToImage)
