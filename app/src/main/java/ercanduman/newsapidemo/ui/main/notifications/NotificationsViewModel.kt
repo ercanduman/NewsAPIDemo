@@ -1,4 +1,4 @@
-package ercanduman.newsapidemo.ui.notifications
+package ercanduman.newsapidemo.ui.main.notifications
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
