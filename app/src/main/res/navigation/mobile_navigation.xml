@@ -8,18 +8,18 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="ercanduman.newsapidemo.ui.main.news.NewsFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_news"
         tools:layout="@layout/fragment_news" />
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="ercanduman.newsapidemo.ui.main.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
+        android:name="ercanduman.newsapidemo.ui.main.dashboard.SavedNewsFragment"
+        android:label="@string/title_saved"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
         android:name="ercanduman.newsapidemo.ui.main.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
+        android:label="@string/title_contact"
         tools:layout="@layout/fragment_notifications" />
 </navigation>
