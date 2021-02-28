@@ -11,4 +11,6 @@ package ercanduman.newsapidemo
  */
 object Constants {
     internal const val API_BASE_URL = "https://newsapi.org/v2/"
+
+    internal const val SEARCH_TIME_DELAY = 500L
 }
