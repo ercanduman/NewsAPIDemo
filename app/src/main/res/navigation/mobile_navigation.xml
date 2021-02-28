@@ -22,4 +22,12 @@
         android:name="ercanduman.newsapidemo.ui.main.contact.ContactFragment"
         android:label="@string/title_contact"
         tools:layout="@layout/fragment_contact" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ercanduman.newsapidemo.ui.main.detail.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" />
+    <action
+        android:id="@+id/global_action_navigate_to_detailsFragment"
+        app:destination="@id/detailsFragment" />
 </navigation>
