@@ -1,13 +1,17 @@
 package ercanduman.newsapidemo.ui.main.news
 
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuInflater
 import android.view.View
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import dagger.hilt.android.AndroidEntryPoint
+import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
@@ -16,6 +20,7 @@ import ercanduman.newsapidemo.util.ApiEvent
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.log
 import ercanduman.newsapidemo.util.show
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
@@ -33,6 +38,7 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
         initRecyclerView()
         handleApiData()
         applyRetryOption()
+        setHasOptionsMenu(true)
     }
 
 
@@ -101,6 +107,31 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
                 textViewError.text = message
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_news_fragment, menu)
+
+        val searchView: SearchView = menu.findItem(R.id.action_search_news).actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean = false
+            override fun onQueryTextChange(newText: String?): Boolean {
+                return if (newText != null && newText.length > 3) {
+                    /**
+                     * If text is not null and has at least 3 characters, then wait for a little
+                     * and call api for new search query.
+                     *
+                     * This way api will not called for every characters written to search field.
+                     */
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        delay(Constants.SEARCH_TIME_DELAY)
+                        viewModel.getApiEvent(newText)
+                    }
+                    true
+                } else false
+            }
+        })
     }
 
     companion object {
