@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="ercanduman.newsapidemo.ui.main.contact.NotificationsFragment"
+        android:name="ercanduman.newsapidemo.ui.main.contact.ContactFragment"
         android:label="@string/title_contact"
-        tools:layout="@layout/fragment_notifications" />
+        tools:layout="@layout/fragment_contact" />
 </navigation>

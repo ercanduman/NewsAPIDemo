@@ -11,4 +11,7 @@
     <string name="no_data_found">No data found.</string>
     <string name="execution_failure">"Execution failed. Error: %s"</string>
     <string name="search">Search</string>
+    <string name="linkedin">LinkedIn</string>
+    <string name="github">GitHub</string>
+    <string name="e_mail">E-mail</string>
 </resources>
