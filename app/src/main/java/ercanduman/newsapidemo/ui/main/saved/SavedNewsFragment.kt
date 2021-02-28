@@ -20,7 +20,7 @@ class SavedNewsFragment : Fragment() {
     ): View? {
         savedNewsViewModel =
             ViewModelProvider(this).get(SavedNewsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_dashboard, container, false)
+        val root = inflater.inflate(R.layout.fragment_saved, container, false)
         val textView: TextView = root.findViewById(R.id.text_dashboard)
         savedNewsViewModel.text.observe(viewLifecycleOwner, {
             textView.text = it

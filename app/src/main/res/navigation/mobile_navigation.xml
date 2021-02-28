@@ -12,13 +12,13 @@
         tools:layout="@layout/fragment_news" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
+        android:id="@+id/navigation_saved"
         android:name="ercanduman.newsapidemo.ui.main.saved.SavedNewsFragment"
         android:label="@string/title_saved"
-        tools:layout="@layout/fragment_dashboard" />
+        tools:layout="@layout/fragment_saved" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
+        android:id="@+id/navigation_contact"
         android:name="ercanduman.newsapidemo.ui.main.contact.ContactFragment"
         android:label="@string/title_contact"
         tools:layout="@layout/fragment_contact" />
