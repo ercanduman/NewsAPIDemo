@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_dashboard"
-        android:name="ercanduman.newsapidemo.ui.main.dashboard.SavedNewsFragment"
+        android:name="ercanduman.newsapidemo.ui.main.saved.SavedNewsFragment"
         android:label="@string/title_saved"
         tools:layout="@layout/fragment_dashboard" />
 
     <fragment
         android:id="@+id/navigation_notifications"
-        android:name="ercanduman.newsapidemo.ui.main.notifications.NotificationsFragment"
+        android:name="ercanduman.newsapidemo.ui.main.contact.NotificationsFragment"
         android:label="@string/title_contact"
         tools:layout="@layout/fragment_notifications" />
 </navigation>

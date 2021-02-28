@@ -1,4 +1,4 @@
-package ercanduman.newsapidemo.ui.main.dashboard
+package ercanduman.newsapidemo.ui.main.saved
 
 import android.os.Bundle
 import android.view.LayoutInflater

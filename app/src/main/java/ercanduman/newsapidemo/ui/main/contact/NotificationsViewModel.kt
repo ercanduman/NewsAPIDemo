@@ -1,13 +1,13 @@
-package ercanduman.newsapidemo.ui.main.dashboard
+package ercanduman.newsapidemo.ui.main.contact
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class SavedNewsViewModel : ViewModel() {
+class NotificationsViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
+        value = "This is notifications Fragment"
     }
     val text: LiveData<String> = _text
 }
