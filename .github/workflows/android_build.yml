@@ -9,7 +9,8 @@ on: pull_request
 # Job is a set of steps that execute on the same runner. Jobs are collections of steps, which run
 # commands/scripts. Each job must declare an executor that is either Docker, Machine, Windows, or MacOS.
 jobs:
-  build:
+  test_job:
+    name: Test
 
   # Define a runner that can build and test android app
   runs-on: ubuntu-latest
@@ -17,10 +18,11 @@ jobs:
   # Steps are actions that need to be taken to complete your job. Steps are usually a collection of executable commands.
   steps:
     # firstly checkout a specific branch
-    - uses: actions/checkout@v1
+    - name: Checkout
+    - uses: actions/checkout@v2
 
     - name: Set Up JDK
-      uses: actions/setup-jdk@v1
+      uses: actions/setup-jdk@v2
       with:
         java-version: 1.8
 
@@ -33,10 +35,21 @@ jobs:
       # To see all tasks and more detail, run gradlew tasks --all
       run: ./gradlew test
 
-    - name: Build Project
-      # assemble - Assemble main outputs for all the variants.
-      run: ./gradleq assemble
+    - name: Upload Test Reports
+      if: ${{ always() }}
+          uses: actions/upload-artifact@v2
+          with:
+            name: test-reports
+            path: '**/build/reports/tests/'
 
 
+   assemble_job:
+    name: Build Project
+    runs-on: ubuntu-latest
 
+      steps:
+        - name: Checkout
+          uses: actions/checkout@v2
 
+        - name: Assemble Debug
+          run: ./gradlew assembleDebug
