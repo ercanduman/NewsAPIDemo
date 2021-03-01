@@ -1,0 +1,42 @@
+# Name of the workflow
+# Displayed in workflow list in Actions tab.
+name: Android Build
+
+# Define when workflow should run which can be on Pull Request.
+on: pull_request
+
+# Define the tasks that will be run for each pull request.
+# Job is a set of steps that execute on the same runner. Jobs are collections of steps, which run
+# commands/scripts. Each job must declare an executor that is either Docker, Machine, Windows, or MacOS.
+jobs:
+  build:
+
+  # Define a runner that can build and test android app
+  runs-on: ubuntu-latest
+
+  # Steps are actions that need to be taken to complete your job. Steps are usually a collection of executable commands.
+  steps:
+    # firstly checkout a specific branch
+    - uses: actions/checkout@v1
+
+    - name: Set Up JDK
+      uses: actions/setup-jdk@v1
+      with:
+        java-version: 1.8
+
+    # Define Android specific build tasks
+    - name: Run Tests
+
+      # debugInstrumentationTests is a job for running instrumented tests.
+      # connectedAndroidTest: Installs and runs instrumentation tests for all flavors on connected devices.
+      # test - Run unit tests for all variants.
+      # To see all tasks and more detail, run gradlew tasks --all
+      run: ./gradlew test
+
+    - name: Build Project
+      # assemble - Assemble main outputs for all the variants.
+      run: ./gradleq assemble
+
+
+
+
