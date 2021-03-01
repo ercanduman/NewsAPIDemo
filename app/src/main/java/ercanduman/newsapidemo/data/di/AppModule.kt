@@ -1,10 +1,15 @@
 package ercanduman.newsapidemo.data.di
 
+import android.content.Context
+import androidx.room.Room
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import ercanduman.newsapidemo.Constants
+import ercanduman.newsapidemo.data.db.AppDatabase
+import ercanduman.newsapidemo.data.db.dao.ArticleDao
 import ercanduman.newsapidemo.data.network.NewsAPI
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -36,10 +41,30 @@ object AppModule {
      */
     @Provides
     @Singleton
-    fun providesNewsAPI(): NewsAPI =
+    fun provideNewsAPI(): NewsAPI =
         Retrofit.Builder()
             .baseUrl(Constants.API_BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(NewsAPI::class.java)
+
+    /**
+     * Provides AppDatabase instance and gives ability to Inject database into other classes.
+     *
+     * Singleton: Identifies that the injector only instantiates once.
+     */
+    @Provides
+    @Singleton
+    fun provideAppDatabase(@ApplicationContext context: Context): AppDatabase =
+        Room.databaseBuilder(context, AppDatabase::class.java, Constants.DATABASE_NAME).build()
+
+    /**
+     * Provides data access object (ArticleDao) that can be used for database queries.
+     *
+     * @param db AppDatabase
+     * @return ArticleDao
+     */
+    @Singleton
+    @Provides
+    fun provideDAO(db: AppDatabase): ArticleDao = db.dao()
 }
