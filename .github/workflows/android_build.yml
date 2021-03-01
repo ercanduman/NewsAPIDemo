@@ -35,13 +35,13 @@ jobs:
       # To see all tasks and more detail, run gradlew tasks --all
       run: ./gradlew test
 
-   assemble_job:
-    name: Build Project
-    runs-on: ubuntu-latest
+    assemble_job:
+      name: Build Project
+      runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+        steps:
+          - name: Checkout
+            uses: actions/checkout@v2
 
-        - name: Assemble Debug
-          run: ./gradlew assembleDebug
+          - name: Assemble Debug
+            run: ./gradlew assembleDebug
