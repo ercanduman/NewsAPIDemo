@@ -19,7 +19,7 @@ jobs:
     steps:
       # firstly checkout a specific branch
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
       - name: Set Up JDK
         uses: actions/setup-jdk@v2
@@ -40,7 +40,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@master
+        uses: actions/checkout@v2
 
       - name: Assemble Debug
         run: ./gradlew assembleDebug
