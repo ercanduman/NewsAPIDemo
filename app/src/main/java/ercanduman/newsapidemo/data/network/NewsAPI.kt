@@ -1,7 +1,7 @@
 package ercanduman.newsapidemo.data.network
 
 import ercanduman.newsapidemo.BuildConfig
-import ercanduman.newsapidemo.data.network.model.NewsAPIResponse
+import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query
