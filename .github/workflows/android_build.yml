@@ -35,13 +35,6 @@ jobs:
       # To see all tasks and more detail, run gradlew tasks --all
       run: ./gradlew test
 
-    - name: Upload Test Reports
-          uses: actions/upload-artifact@v2
-          with:
-            name: test-reports
-            path: '**/build/reports/tests/'
-
-
    assemble_job:
     name: Build Project
     runs-on: ubuntu-latest
