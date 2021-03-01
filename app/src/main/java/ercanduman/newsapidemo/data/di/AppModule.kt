@@ -51,6 +51,8 @@ object AppModule {
     /**
      * Provides AppDatabase instance and gives ability to Inject database into other classes.
      *
+     * Since database is used during lifecycle of application, [context] should be application context.
+     *
      * Singleton: Identifies that the injector only instantiates once.
      */
     @Provides
@@ -60,9 +62,6 @@ object AppModule {
 
     /**
      * Provides data access object (ArticleDao) that can be used for database queries.
-     *
-     * @param db AppDatabase
-     * @return ArticleDao
      */
     @Singleton
     @Provides
