@@ -1,11 +1,20 @@
 package ercanduman.newsapidemo.data.network.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
 /**
  * Data class to hold and store article related data.
  *
- * "data" keyword make sure that equals, hashcode, copy and toString methods will be generated under
- * the hood. So no need to create these methods once again to compare objects.
+ * "data" keyword make sure that equals, hashcode, copy and toString methods will be generated
+ * under the hood. So no need to create these methods once again to compare objects.
+ *
+ * Annotating with @Entity means this class will be stored locally in room library and
+ * a mapping SQLite table in the database will be created.
+ *
+ * Each entity must have at least 1 field annotated with PrimaryKey.
  */
+@Entity
 data class Article(
     val author: String,
     val content: String,
@@ -14,5 +23,6 @@ data class Article(
     val source: Source,
     val title: String,
     val url: String,
-    val urlToImage: String
+    val urlToImage: String,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0
 )
