@@ -31,10 +31,20 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): ArticleDao
 }
 
+/**
+ * Tells the room how to interpret inner class (Source) in Article class will be stored
+ *  in local persistence database.
+ */
 class Converter {
+    /**
+     * Converts parameterized source object into String text.
+     */
     @TypeConverter
     fun convertFromSource(source: Source): String = source.name
 
+    /**
+     * Generates new Source object from provided string text.
+     */
     @TypeConverter
     fun convertToSource(sourceName: String): Source = Source(sourceName, sourceName)
 }

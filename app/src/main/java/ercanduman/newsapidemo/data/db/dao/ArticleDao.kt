@@ -45,14 +45,14 @@ interface ArticleDao {
     /**
      * Inserts parameter object into database.
      *
-     * In case of conflicts, the new old one will be replaced with new instance.
+     * In case of conflicts, the old one will be replaced with new object.
      *
      */
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(article: Article)
 
     /**
-     * Deletes its parameter from the database.
+     * Deletes its parameter object from the database.
      */
     @Delete
     suspend fun delete(article: Article)
