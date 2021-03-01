@@ -17,7 +17,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI) {
     /**
      * Connects NewsAPI, gets data and returns ApiExecutionEvent
      */
-    suspend fun getApiEvent(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
+    suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
 
     suspend fun searchArticles(query: String, page: Int): ApiEvent =
         safeApiCall { api.searchArticles(query, page) }
