@@ -27,6 +27,6 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
 
     fun getApiEvent(searchQuery: String) = viewModelScope.launch {
         _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.getApiEvent(searchQuery)
+        _apiEvent.value = repository.getArticles(1)
     }
 }

@@ -1,7 +1,9 @@
 package ercanduman.newsapidemo.data.repository
 
 import ercanduman.newsapidemo.data.network.NewsAPI
+import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
 import ercanduman.newsapidemo.util.ApiEvent
+import retrofit2.Response
 import javax.inject.Inject
 
 /**
@@ -15,20 +17,21 @@ class AppRepository @Inject constructor(private val api: NewsAPI) {
     /**
      * Connects NewsAPI, gets data and returns ApiExecutionEvent
      */
-    suspend fun getApiEvent(searchQuery: String): ApiEvent {
-        return try {
-            val result = api.getArticles(searchQuery)
+    suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
+
+    suspend fun searchArticles(query: String, page: Int): ApiEvent =
+        safeApiCall { api.searchArticles(query, page) }
+
+    private suspend fun safeApiCall(apiCall: suspend () -> Response<NewsAPIResponse>): ApiEvent =
+        try {
+            val result = apiCall.invoke()
             if (result.isSuccessful) {
-                if (result.body() != null) {
-                    ApiEvent.Success(result.body()!!.articles)
-                } else {
-                    ApiEvent.Empty
-                }
+                if (result.body() != null) ApiEvent.Success(result.body()!!.articles)
+                else ApiEvent.Empty
             } else {
                 ApiEvent.Error("Error: ${result.message()} - ${result.errorBody()} Code: ${result.code()}")
             }
         } catch (e: Exception) {
             ApiEvent.Error(e.message ?: "An unknown error occurred...")
         }
-    }
 }

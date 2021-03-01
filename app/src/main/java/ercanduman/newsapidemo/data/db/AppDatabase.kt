@@ -2,9 +2,12 @@ package ercanduman.newsapidemo.data.db
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverter
+import androidx.room.TypeConverters
 import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.data.db.dao.ArticleDao
 import ercanduman.newsapidemo.data.network.model.Article
+import ercanduman.newsapidemo.data.network.model.Source
 
 /**
  *
@@ -23,6 +26,15 @@ import ercanduman.newsapidemo.data.network.model.Article
  * @since  3/1/21
  */
 @Database(entities = [Article::class], version = Constants.DATABASE_VERSION, exportSchema = false)
+@TypeConverters(Converter::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun dao(): ArticleDao
+}
+
+class Converter {
+    @TypeConverter
+    fun convertFromSource(source: Source): String = source.name
+
+    @TypeConverter
+    fun convertToSource(sourceName: String): Source = Source(sourceName, sourceName)
 }
