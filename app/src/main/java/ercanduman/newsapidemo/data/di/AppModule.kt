@@ -13,9 +13,11 @@ import javax.inject.Singleton
 /**
  * Contains & creates objects which available during lifecycle of application.
  *
- * Most of these objects should have only single instance and "object" keyword provide this feature.
+ * Most of these objects should have only single instance. Kotlin "object" keyword provides
+ * this feature.
  *
- * SingletonComponent: A Hilt component for singleton bindings.
+ * SingletonComponent: A Hilt component for singleton bindings and objects will be bind to the
+ * lifecycle of application.
  *
  * @author ercan
  * @since  2/27/21
@@ -25,7 +27,10 @@ import javax.inject.Singleton
 object AppModule {
 
     /**
-     * Provide NewsAPI instance via Hilt library.
+     * Provides NewsAPI instance via Hilt library.
+     *
+     * NewsAPI instance created by Retrofit which is responsible for implementation of the
+     * API endpoints defined by the NewsAPI service interface.
      *
      * @Singleton annotation identifies a type that the injector only instantiates once.
      */
