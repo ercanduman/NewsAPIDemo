@@ -17,7 +17,9 @@ import ercanduman.newsapidemo.databinding.ListItemArticleBinding
  * @author ercan
  * @since  2/27/21
  */
-class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_CALLBACK) {
+class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
+    PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_UTIL_CALLBACK) {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
         val binding =
             ListItemArticleBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -29,8 +31,18 @@ class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_
         if (currentArticle != null) holder.bindData(currentArticle)
     }
 
-    class NewsViewHolder(private val binding: ListItemArticleBinding) :
+    inner class NewsViewHolder(private val binding: ListItemArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
+
+        init {
+            binding.root.setOnClickListener {
+                val adapterPosition = bindingAdapterPosition
+                if (adapterPosition != RecyclerView.NO_POSITION) {
+                    val currentArticle = getItem(adapterPosition)
+                    if (currentArticle != null) onArticleClicked.articleClicked(currentArticle)
+                }
+            }
+        }
 
         fun bindData(article: Article) {
             binding.apply {
@@ -51,11 +63,16 @@ class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_
 
 
     /**
-     * DiffUtil callback to compare two Article object and apply changes to RecyclerView.
+     *  DiffUtil can calculate the difference between versions of the list. DiffUtil takes both
+     *  lists as input and computes the difference, which can be passed to RecyclerView to trigger
+     *  minimal animations and updates to keep UI performant, and animations meaningful.
+     *  This approach requires that each list is represented in memory with "immutable content",
+     *  and relies on receiving updates as new instances of lists.
      */
     companion object {
         private val DIFF_UTIL_CALLBACK = object : DiffUtil.ItemCallback<Article>() {
             override fun areItemsTheSame(oldItem: Article, newItem: Article): Boolean {
+                /* URL is unique for each item */
                 return oldItem.url == oldItem.url
             }
 
@@ -63,5 +80,9 @@ class NewsAdapter : PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(DIFF_
                 return oldItem == newItem
             }
         }
+    }
+
+    interface OnArticleClicked {
+        fun articleClicked(article: Article)
     }
 }

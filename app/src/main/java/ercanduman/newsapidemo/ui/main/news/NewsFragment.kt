@@ -16,20 +16,17 @@ import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
-import ercanduman.newsapidemo.util.ApiEvent
-import ercanduman.newsapidemo.util.hide
-import ercanduman.newsapidemo.util.log
-import ercanduman.newsapidemo.util.show
+import ercanduman.newsapidemo.util.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class NewsFragment : Fragment(R.layout.fragment_news) {
+class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClicked {
 
     private val viewModel: NewsViewModel by viewModels()
     private lateinit var binding: FragmentNewsBinding
-    private val newsAdapter = NewsAdapter()
+    private val newsAdapter = NewsAdapter(this)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -136,5 +133,9 @@ class NewsFragment : Fragment(R.layout.fragment_news) {
 
     companion object {
         private const val DEFAULT_SEARCH_QUERY = "android"
+    }
+
+    override fun articleClicked(article: Article) {
+        requireContext().toast("${article.title} clicked.")
     }
 }
