@@ -8,18 +8,26 @@
     <fragment
         android:id="@+id/navigation_home"
         android:name="ercanduman.newsapidemo.ui.main.news.NewsFragment"
-        android:label="@string/title_home"
+        android:label="@string/title_news"
         tools:layout="@layout/fragment_news" />
 
     <fragment
-        android:id="@+id/navigation_dashboard"
-        android:name="ercanduman.newsapidemo.ui.main.dashboard.DashboardFragment"
-        android:label="@string/title_dashboard"
-        tools:layout="@layout/fragment_dashboard" />
+        android:id="@+id/navigation_saved"
+        android:name="ercanduman.newsapidemo.ui.main.saved.SavedNewsFragment"
+        android:label="@string/title_saved"
+        tools:layout="@layout/fragment_saved" />
 
     <fragment
-        android:id="@+id/navigation_notifications"
-        android:name="ercanduman.newsapidemo.ui.main.notifications.NotificationsFragment"
-        android:label="@string/title_notifications"
-        tools:layout="@layout/fragment_notifications" />
+        android:id="@+id/navigation_contact"
+        android:name="ercanduman.newsapidemo.ui.main.contact.ContactFragment"
+        android:label="@string/title_contact"
+        tools:layout="@layout/fragment_contact" />
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="ercanduman.newsapidemo.ui.main.detail.DetailsFragment"
+        android:label="fragment_details"
+        tools:layout="@layout/fragment_details" />
+    <action
+        android:id="@+id/global_action_navigate_to_detailsFragment"
+        app:destination="@id/detailsFragment" />
 </navigation>
