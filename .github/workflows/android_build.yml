@@ -18,8 +18,8 @@ jobs:
     # Steps are actions that need to be taken to complete your job. Steps are usually a collection of executable commands.
     steps:
       # firstly checkout a specific branch
+      - uses: actions/checkout@master
       - name: Checkout
-      - uses: actions/checkout@v2
 
       - name: Set Up JDK
         uses: actions/setup-jdk@v2
@@ -39,8 +39,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@master
       - name: Checkout
-        uses: actions/checkout@v2
 
       - name: Assemble Debug
         run: ./gradlew assembleDebug
