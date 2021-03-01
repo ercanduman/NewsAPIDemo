@@ -38,9 +38,9 @@ jobs:
     name: Build Project
     runs-on: ubuntu-latest
 
-      steps:
-        - name: Checkout
-          uses: actions/checkout@v2
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
 
-        - name: Assemble Debug
-          run: ./gradlew assembleDebug
+      - name: Assemble Debug
+        run: ./gradlew assembleDebug
