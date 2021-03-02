@@ -15,13 +15,21 @@ import javax.inject.Inject
 class AppRepository @Inject constructor(private val api: NewsAPI) {
 
     /**
+     * Gets breaking news from API.
+     *
      * Connects NewsAPI, gets data and returns ApiExecutionEvent
      */
     suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
 
+    /**
+     * Searches for articles based on query text.
+     */
     suspend fun searchArticles(query: String, page: Int): ApiEvent =
         safeApiCall { api.searchArticles(query, page) }
 
+    /**
+     * Handles API response and based on result returns respective ApiEvent
+     */
     private suspend fun safeApiCall(apiCall: suspend () -> Response<NewsAPIResponse>): ApiEvent =
         try {
             val result = apiCall.invoke()

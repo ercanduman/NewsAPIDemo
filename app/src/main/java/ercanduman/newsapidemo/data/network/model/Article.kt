@@ -1,7 +1,9 @@
 package ercanduman.newsapidemo.data.network.model
 
+import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
 /**
  * Data class to hold and store article related data.
@@ -15,6 +17,7 @@ import androidx.room.PrimaryKey
  * Each entity must have at least 1 field annotated with PrimaryKey.
  */
 @Entity
+@Parcelize
 data class Article(
     val author: String,
     val content: String,
@@ -25,4 +28,4 @@ data class Article(
     val url: String,
     val urlToImage: String,
     @PrimaryKey(autoGenerate = true) val id: Int = 0
-)
+) : Parcelable
