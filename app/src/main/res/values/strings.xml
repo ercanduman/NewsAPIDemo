@@ -5,6 +5,7 @@
     <string name="title_news">Breaking News</string>
     <string name="title_saved">Saved News</string>
     <string name="title_contact">Contact</string>
+    <string name="title_details">Details</string>
 
     <string name="retry">Retry</string>
     <string name="error_occurred">An error occurred</string>

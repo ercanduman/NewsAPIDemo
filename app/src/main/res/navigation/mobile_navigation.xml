@@ -25,7 +25,7 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="ercanduman.newsapidemo.ui.main.detail.DetailsFragment"
-        android:label="@string/details"
+        android:label="@string/title_details"
         tools:layout="@layout/fragment_details">
         <argument
             android:name="article"
