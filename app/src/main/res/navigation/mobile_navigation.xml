@@ -25,8 +25,12 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="ercanduman.newsapidemo.ui.main.detail.DetailsFragment"
-        android:label="fragment_details"
-        tools:layout="@layout/fragment_details" />
+        android:label="@string/details"
+        tools:layout="@layout/fragment_details">
+        <argument
+            android:name="article"
+            app:argType="ercanduman.newsapidemo.data.network.model.Article" />
+    </fragment>
     <action
         android:id="@+id/global_action_navigate_to_detailsFragment"
         app:destination="@id/detailsFragment" />

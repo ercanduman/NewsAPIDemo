@@ -8,6 +8,7 @@ import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import dagger.hilt.android.AndroidEntryPoint
@@ -128,11 +129,9 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
             true
         } else false
 
-    companion object {
-        private const val DEFAULT_SEARCH_QUERY = "android"
-    }
-
     override fun articleClicked(article: Article) {
         requireContext().toast("${article.title} clicked.")
+        val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
+        findNavController().navigate(action)
     }
 }
