@@ -31,7 +31,6 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding = FragmentDetailsBinding.bind(view)
 
         val article = navigationArgs.article
-
         displayArticle(article)
     }
 
