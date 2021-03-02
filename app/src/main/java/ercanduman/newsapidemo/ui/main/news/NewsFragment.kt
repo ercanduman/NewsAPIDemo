@@ -46,20 +46,15 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     }
 
     private fun handleApiData() = viewLifecycleOwner.lifecycleScope.launch {
-        viewModel.getApiEvent(DEFAULT_SEARCH_QUERY)
+        viewModel.getBreakingNewsArticles()
 
         viewModel.apiEvent.collect { event ->
             when (event) {
+                is ApiEvent.Empty -> showContent(message = getString(R.string.no_data_found))
+                is ApiEvent.Success -> setData(event.data)
                 is ApiEvent.Loading -> binding.progressBar.show()
-                is ApiEvent.Empty -> {
-                    showContent(message = getString(R.string.no_data_found))
-                }
-                is ApiEvent.Error -> {
+                is ApiEvent.Error ->
                     showContent(message = getString(R.string.execution_failure, event.message))
-                }
-                is ApiEvent.Success -> {
-                    setData(event.data)
-                }
             }
         }
     }
@@ -110,26 +105,29 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_news_fragment, menu)
 
-        val searchView: SearchView = menu.findItem(R.id.action_search_news).actionView as SearchView
+        val searchView: SearchView =
+            menu.findItem(R.id.action_search_news).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean {
-                return if (newText != null && newText.length > 3) {
-                    /**
-                     * If text is not null and has at least 3 characters, then wait for a little
-                     * and call api for new search query.
-                     *
-                     * This way api will not called for every characters written to search field.
-                     */
-                    viewLifecycleOwner.lifecycleScope.launch {
-                        delay(Constants.SEARCH_TIME_DELAY)
-                        viewModel.getApiEvent(newText)
-                    }
-                    true
-                } else false
-            }
+            override fun onQueryTextChange(newText: String?): Boolean =
+                searchForArticles(newText)
         })
     }
+
+    private fun searchForArticles(newText: String?) =
+        if (newText != null && newText.length > 3) {
+            /**
+             * If text is not null and has at least 3 characters, then wait for a little
+             * and call API for new search query.
+             *
+             * This way api will not called for every characters written to search field.
+             */
+            viewLifecycleOwner.lifecycleScope.launch {
+                delay(Constants.SEARCH_TIME_DELAY)
+                viewModel.searchForArticles(newText)
+            }
+            true
+        } else false
 
     companion object {
         private const val DEFAULT_SEARCH_QUERY = "android"

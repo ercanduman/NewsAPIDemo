@@ -25,8 +25,18 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
     private val _apiEvent = MutableStateFlow<ApiEvent>(ApiEvent.Empty)
     val apiEvent: StateFlow<ApiEvent> = _apiEvent
 
-    fun getApiEvent(searchQuery: String) = viewModelScope.launch {
+    fun getBreakingNewsArticles() = viewModelScope.launch {
         _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.getArticles(1)
+        _apiEvent.value = repository.getArticles(DEFAULT_PAGE)
+    }
+
+    fun searchForArticles(searchQuery: String) = viewModelScope.launch {
+        _apiEvent.value = ApiEvent.Loading
+        _apiEvent.value = repository.searchArticles(searchQuery, DEFAULT_PAGE)
+    }
+
+
+    companion object {
+        private const val DEFAULT_PAGE = 1
     }
 }

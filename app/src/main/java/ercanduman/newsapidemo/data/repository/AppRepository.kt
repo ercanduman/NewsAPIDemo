@@ -26,8 +26,12 @@ class AppRepository @Inject constructor(private val api: NewsAPI) {
         try {
             val result = apiCall.invoke()
             if (result.isSuccessful) {
-                if (result.body() != null) ApiEvent.Success(result.body()!!.articles)
-                else ApiEvent.Empty
+                val resultBody = result.body()
+                if (resultBody != null && resultBody.articles.isNotEmpty()) {
+                    ApiEvent.Success(resultBody.articles)
+                } else {
+                    ApiEvent.Empty
+                }
             } else {
                 ApiEvent.Error("Error: ${result.message()} - ${result.errorBody()} Code: ${result.code()}")
             }
