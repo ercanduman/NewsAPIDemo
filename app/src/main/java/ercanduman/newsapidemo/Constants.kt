@@ -6,7 +6,7 @@ package ercanduman.newsapidemo
  * If Constants is created as class with companion object, then compiler will generate getter
  * and setter for fields under the hood. For this reason, Constants should be "object" type.
  *
- * internal: access modifier that will be visible entire application/module.
+ * internal: access modifier that will be visible to entire application/module.
  *
  * @author ercan
  * @since  2/27/21
