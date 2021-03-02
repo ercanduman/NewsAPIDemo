@@ -15,6 +15,7 @@ import ercanduman.newsapidemo.databinding.FragmentDetailsBinding
 import ercanduman.newsapidemo.ui.main.news.NewsViewModel
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
+import ercanduman.newsapidemo.util.snackbar
 
 /**
  * Display passed article in WebView.
@@ -34,6 +35,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         displayArticle()
         binding.fabSaveArticle.setOnClickListener {
             viewModel.saveArticleClicked(navigationArgs.article)
+            it.snackbar(getString(R.string.article_saved))
         }
     }
 
