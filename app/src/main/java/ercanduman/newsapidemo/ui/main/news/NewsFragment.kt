@@ -17,7 +17,10 @@ import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
-import ercanduman.newsapidemo.util.*
+import ercanduman.newsapidemo.util.ApiEvent
+import ercanduman.newsapidemo.util.hide
+import ercanduman.newsapidemo.util.log
+import ercanduman.newsapidemo.util.show
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -130,7 +133,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         } else false
 
     override fun articleClicked(article: Article) {
-        requireContext().toast("${article.title} clicked.")
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
     }
