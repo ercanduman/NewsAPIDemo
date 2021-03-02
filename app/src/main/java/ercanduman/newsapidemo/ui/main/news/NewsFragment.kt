@@ -109,8 +109,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
             menu.findItem(R.id.action_search_news).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean =
-                searchForArticles(newText)
+            override fun onQueryTextChange(newText: String?): Boolean = searchForArticles(newText)
         })
     }
 
