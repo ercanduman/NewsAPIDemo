@@ -1,30 +1,47 @@
 package ercanduman.newsapidemo.ui.main.saved
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
+import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
+import ercanduman.newsapidemo.data.network.model.Article
+import ercanduman.newsapidemo.databinding.FragmentSavedBinding
+import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
+import ercanduman.newsapidemo.ui.main.news.NewsFragmentDirections
 
-class SavedNewsFragment : Fragment() {
+@AndroidEntryPoint
+class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArticleClicked {
 
-    private lateinit var savedNewsViewModel: SavedNewsViewModel
+    private val viewModel: SavedNewsViewModel by viewModels()
+    private lateinit var binding: FragmentSavedBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        savedNewsViewModel =
-            ViewModelProvider(this).get(SavedNewsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_saved, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        savedNewsViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
-        return root
+    private val newsAdapter = NewsAdapter(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentSavedBinding.bind(view)
+
+        initRecyclerView()
+        observerArticles()
+    }
+
+    private fun initRecyclerView() = binding.recyclerView.apply {
+        adapter = newsAdapter
+        setHasFixedSize(true)
+        itemAnimator = null
+    }
+
+    private fun observerArticles() {
+        viewModel.getSavedArticles().observe(viewLifecycleOwner) {
+            newsAdapter.submitData(viewLifecycleOwner.lifecycle, PagingData.from(it))
+        }
+    }
+
+    override fun articleClicked(article: Article) {
+        val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
+        findNavController().navigate(action)
     }
 }
