@@ -3,6 +3,7 @@ package ercanduman.newsapidemo.ui.main.news
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.data.repository.AppRepository
 import ercanduman.newsapidemo.util.ApiEvent
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -33,6 +34,10 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
     fun searchForArticles(searchQuery: String) = viewModelScope.launch {
         _apiEvent.value = ApiEvent.Loading
         _apiEvent.value = repository.searchArticles(searchQuery, DEFAULT_PAGE)
+    }
+
+    fun saveArticleClicked(article: Article) = viewModelScope.launch {
+        repository.saveArticle(article)
     }
 
 

@@ -1,6 +1,8 @@
 package ercanduman.newsapidemo.data.repository
 
+import ercanduman.newsapidemo.data.db.dao.ArticleDao
 import ercanduman.newsapidemo.data.network.NewsAPI
+import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
 import ercanduman.newsapidemo.util.ApiEvent
 import retrofit2.Response
@@ -12,7 +14,7 @@ import javax.inject.Inject
  * @author ercan
  * @since  2/27/21
  */
-class AppRepository @Inject constructor(private val api: NewsAPI) {
+class AppRepository @Inject constructor(private val api: NewsAPI, private val dao: ArticleDao) {
 
     /**
      * Gets breaking news from API.
@@ -46,4 +48,8 @@ class AppRepository @Inject constructor(private val api: NewsAPI) {
         } catch (e: Exception) {
             ApiEvent.Error(e.message ?: "An unknown error occurred...")
         }
+
+    suspend fun saveArticle(article: Article) {
+        dao.insert(article)
+    }
 }

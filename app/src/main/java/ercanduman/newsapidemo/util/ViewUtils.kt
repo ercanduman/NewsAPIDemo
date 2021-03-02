@@ -3,6 +3,7 @@ package ercanduman.newsapidemo.util
 import android.content.Context
 import android.view.View
 import android.widget.Toast
+import com.google.android.material.snackbar.Snackbar
 
 /**
  * Contains View and Context related extension functions.
@@ -21,4 +22,8 @@ fun View.hide() {
 
 fun Context.toast(message: String) {
     Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+}
+
+fun View.snackbar(message: String) {
+    Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
 }

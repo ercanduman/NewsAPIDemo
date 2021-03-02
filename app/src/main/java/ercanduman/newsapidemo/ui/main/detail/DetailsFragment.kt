@@ -9,18 +9,20 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
+import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
-import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentDetailsBinding
 import ercanduman.newsapidemo.ui.main.news.NewsViewModel
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
+import ercanduman.newsapidemo.util.snackbar
 
 /**
  * Display passed article in WebView.
  *
  * FAB button in this fragment will be used to bookmark an article that will be saved locally.
  */
+@AndroidEntryPoint
 class DetailsFragment : Fragment(R.layout.fragment_details) {
     private val viewModel: NewsViewModel by viewModels()
     private val navigationArgs: DetailsFragmentArgs by navArgs()
@@ -30,16 +32,18 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         super.onViewCreated(view, savedInstanceState)
         binding = FragmentDetailsBinding.bind(view)
 
-        val article = navigationArgs.article
-
-        displayArticle(article)
+        displayArticle()
+        binding.fabSaveArticle.setOnClickListener {
+            viewModel.saveArticleClicked(navigationArgs.article)
+            it.snackbar(getString(R.string.article_saved))
+        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")
-    private fun displayArticle(article: Article) {
+    private fun displayArticle() {
         binding.webView.apply {
             webViewClient = webViewCustomClient
-            loadUrl(article.url)
+            loadUrl(navigationArgs.article.url)
             settings.javaScriptEnabled = true
         }
     }
