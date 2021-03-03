@@ -37,7 +37,7 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
     }
 
     fun saveArticleClicked(article: Article) = viewModelScope.launch {
-        repository.saveArticle(article)
+        repository.insert(article.copy(isSaved = true))
     }
 
     companion object {
