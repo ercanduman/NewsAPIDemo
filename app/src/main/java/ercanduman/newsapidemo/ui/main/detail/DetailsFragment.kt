@@ -33,9 +33,12 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
         binding = FragmentDetailsBinding.bind(view)
 
         displayArticle()
-        binding.fabSaveArticle.setOnClickListener {
-            viewModel.saveArticleClicked(navigationArgs.article)
-            it.snackbar(getString(R.string.article_saved))
+        binding.fabSaveArticle.apply {
+            setOnClickListener {
+                viewModel.saveArticleClicked(navigationArgs.article)
+                it.snackbar(getString(R.string.article_saved))
+                setImageResource(R.drawable.ic_bookmark_selected)
+            }
         }
     }
 
