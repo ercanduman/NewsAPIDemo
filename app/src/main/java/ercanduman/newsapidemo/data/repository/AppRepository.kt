@@ -54,4 +54,5 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
     }
 
     fun getSavedArticles() = dao.getSavedArticles()
+    suspend fun delete(article: Article) = dao.delete(article)
 }
