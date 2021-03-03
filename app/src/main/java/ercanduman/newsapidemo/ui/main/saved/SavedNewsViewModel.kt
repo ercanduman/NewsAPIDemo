@@ -13,4 +13,5 @@ import javax.inject.Inject
 class SavedNewsViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
     fun getSavedArticles() = repository.getSavedArticles().asLiveData()
     fun deleteArticle(article: Article) = viewModelScope.launch { repository.delete(article) }
+    fun saveArticle(article: Article) = viewModelScope.launch { repository.saveArticle(article) }
 }

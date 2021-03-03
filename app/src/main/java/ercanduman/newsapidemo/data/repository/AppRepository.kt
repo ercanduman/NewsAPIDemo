@@ -49,10 +49,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
             ApiEvent.Error(e.message ?: "An unknown error occurred...")
         }
 
-    suspend fun saveArticle(article: Article) {
-        dao.insert(article)
-    }
-
     fun getSavedArticles() = dao.getSavedArticles()
+    suspend fun saveArticle(article: Article) = dao.insert(article)
     suspend fun delete(article: Article) = dao.delete(article)
 }
