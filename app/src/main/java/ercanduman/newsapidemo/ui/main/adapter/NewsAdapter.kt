@@ -49,7 +49,7 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
         fun bindData(article: Article) {
             binding.apply {
                 tvArticleTitle.text = article.title
-                tvArticleSource.text = article.source.name
+                tvArticleSource.text = article.source?.name
                 tvArticleDescription.text = article.description
                 tvArticlePublishedAt.text = article.publishedAt
 

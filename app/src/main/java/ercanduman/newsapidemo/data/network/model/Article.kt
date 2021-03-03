@@ -20,12 +20,12 @@ import kotlinx.parcelize.Parcelize
 @Entity
 @Parcelize
 data class Article(
-    val author: String = "",
-    val content: String = "",
-    val description: String = "",
-    val publishedAt: String = "",
-    val source: Source = Source("", ""),
-    val title: String = "",
-    val urlToImage: String = "",
+    val author: String? = "",
+    val content: String? = "",
+    val description: String? = "",
+    val publishedAt: String? = "",
+    val source: Source? = Source("", ""),
+    val title: String? = "",
+    val urlToImage: String? = "",
     @PrimaryKey val url: String = Constants.DEFAULT_URL
 ) : Parcelable
