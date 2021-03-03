@@ -40,7 +40,6 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
         repository.saveArticle(article)
     }
 
-
     companion object {
         private const val DEFAULT_PAGE = 1
     }
