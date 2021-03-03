@@ -27,3 +27,13 @@ fun Context.toast(message: String) {
 fun View.snackbar(message: String) {
     Snackbar.make(this, message, Snackbar.LENGTH_LONG).show()
 }
+
+/**
+ * Displays a snackbar with action and when action button click [actionFunction] will be invoked.
+ */
+fun View.snackbarAction(message: String, actionText: String, actionFunction: () -> Unit) {
+    Snackbar.make(this, message, Snackbar.LENGTH_LONG).apply {
+        setAction(actionText) { actionFunction.invoke() }
+        show()
+    }
+}

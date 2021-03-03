@@ -1,30 +1,79 @@
 package ercanduman.newsapidemo.ui.main.saved
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
+import androidx.paging.PagingData
+import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.RecyclerView
+import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
+import ercanduman.newsapidemo.data.network.model.Article
+import ercanduman.newsapidemo.databinding.FragmentSavedBinding
+import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
+import ercanduman.newsapidemo.ui.main.news.NewsFragmentDirections
+import ercanduman.newsapidemo.util.snackbarAction
 
-class SavedNewsFragment : Fragment() {
+@AndroidEntryPoint
+class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArticleClicked {
 
-    private lateinit var savedNewsViewModel: SavedNewsViewModel
+    private val viewModel: SavedNewsViewModel by viewModels()
+    private lateinit var binding: FragmentSavedBinding
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        savedNewsViewModel =
-            ViewModelProvider(this).get(SavedNewsViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_saved, container, false)
-        val textView: TextView = root.findViewById(R.id.text_dashboard)
-        savedNewsViewModel.text.observe(viewLifecycleOwner, {
-            textView.text = it
-        })
-        return root
+    private val newsAdapter = NewsAdapter(this)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding = FragmentSavedBinding.bind(view)
+
+        initRecyclerView()
+        observerArticles()
+        applySwipeToDelete()
+    }
+
+    private fun initRecyclerView() = binding.recyclerView.apply {
+        adapter = newsAdapter
+        setHasFixedSize(true)
+        itemAnimator = null
+    }
+
+    private fun observerArticles() {
+        viewModel.getSavedArticles().observe(viewLifecycleOwner) {
+            newsAdapter.submitData(viewLifecycleOwner.lifecycle, PagingData.from(it))
+        }
+    }
+
+    private fun applySwipeToDelete() {
+        val touchHelper =
+            object : ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP, ItemTouchHelper.LEFT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean = false
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.bindingAdapterPosition
+                    val currentItem = newsAdapter.getCurrentItem(position)
+                    currentItem?.let {
+                        viewModel.deleteArticle(it)
+                        undoDeletingArticle(it)
+                    }
+                }
+            }
+
+        ItemTouchHelper(touchHelper).attachToRecyclerView(binding.recyclerView)
+    }
+
+    private fun undoDeletingArticle(article: Article) {
+        binding.root.snackbarAction(getString(R.string.article_deleted), getString(R.string.undo)) {
+            viewModel.saveArticle(article)
+        }
+    }
+
+    override fun articleClicked(article: Article) {
+        val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
+        findNavController().navigate(action)
     }
 }

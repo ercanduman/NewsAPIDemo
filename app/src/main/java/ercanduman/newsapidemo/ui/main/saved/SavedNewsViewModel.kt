@@ -1,13 +1,17 @@
 package ercanduman.newsapidemo.ui.main.saved
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.viewModelScope
+import dagger.hilt.android.lifecycle.HiltViewModel
+import ercanduman.newsapidemo.data.network.model.Article
+import ercanduman.newsapidemo.data.repository.AppRepository
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class SavedNewsViewModel : ViewModel() {
-
-    private val _text = MutableLiveData<String>().apply {
-        value = "This is dashboard Fragment"
-    }
-    val text: LiveData<String> = _text
+@HiltViewModel
+class SavedNewsViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
+    fun getSavedArticles() = repository.getSavedArticles().asLiveData()
+    fun deleteArticle(article: Article) = viewModelScope.launch { repository.delete(article) }
+    fun saveArticle(article: Article) = viewModelScope.launch { repository.saveArticle(article) }
 }

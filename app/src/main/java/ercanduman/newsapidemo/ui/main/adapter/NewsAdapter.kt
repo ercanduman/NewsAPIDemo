@@ -31,6 +31,8 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
         if (currentArticle != null) holder.bindData(currentArticle)
     }
 
+    fun getCurrentItem(position: Int) = getItem(position)
+
     inner class NewsViewHolder(private val binding: ListItemArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
