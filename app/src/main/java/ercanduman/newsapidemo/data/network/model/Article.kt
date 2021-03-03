@@ -27,5 +27,6 @@ data class Article(
     val source: Source? = Source("", ""),
     val title: String? = "",
     val urlToImage: String? = "",
+    val isSaved: Boolean = false,
     @PrimaryKey val url: String = Constants.DEFAULT_URL
 ) : Parcelable

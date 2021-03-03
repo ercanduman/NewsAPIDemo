@@ -39,6 +39,7 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
                 it.snackbar(getString(R.string.article_saved))
                 setImageResource(R.drawable.ic_bookmark_selected)
             }
+            if (navigationArgs.article.isSaved) setImageResource(R.drawable.ic_bookmark_selected)
         }
     }
 
