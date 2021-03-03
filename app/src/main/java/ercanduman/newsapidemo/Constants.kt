@@ -18,7 +18,7 @@ object Constants {
 
     /* API related constants */
     internal const val API_BASE_URL = "https://newsapi.org/v2/"
-    internal const val DEFAULT_URL = "https:www.google.com"
+    internal const val DEFAULT_URL = "https://github.com/ercanduman/NewsAPIDemo"
 
     /* DB related constants */
     internal const val DATABASE_NAME = "app_database"
