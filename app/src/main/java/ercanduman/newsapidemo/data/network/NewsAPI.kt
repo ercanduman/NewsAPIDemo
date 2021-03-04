@@ -15,10 +15,24 @@ import retrofit2.http.Query
  * everything – Searches every article published by different sources. This endpoint is
  * ideal for news analysis and article discovery.
  *
- * @author ercan
- * @since  2/27/21
+ * @author ercanduman
+ * @since  27.02.2021
  */
 interface NewsAPI {
+    /**
+     *  "companion object" is used in order to create static variables or functions in Kotlin.
+     */
+    companion object {
+        /* API related constants */
+        internal const val API_KEY = BuildConfig.NEWS_API_KEY
+
+        internal const val BASE_URL = "https://newsapi.org/v2/"
+        internal const val DEFAULT_URL = "https://github.com/ercanduman/NewsAPIDemo"
+
+        internal const val DEFAULT_PAGE = 1
+        internal const val DEFAULT_PAGE_SIZE = 20
+        internal const val DEFAULT_COUNTRY_CODE = "us"
+    }
 
     /**
      * Gets breaking news from API based on country code.
@@ -26,14 +40,23 @@ interface NewsAPI {
      * Page query parameter (@Query("page")) added in order to load articles page by page
      * which refers to Pagination functionality.
      *
+     * Parameters:
+     *
+     * [countryCode]: The 2-letter ISO 3166-1 code of the country you want to get headlines for. i.e. us
+     *
+     * [page]: Use this to page through the results if the total results found is greater than the page size.
+     *
+     * [pageSize]: The number of results to return per page (request). 20 is the default, 100 is the maximum.
+     *
      * @return NewsAPIResponse object with retrofit2.Response which then can be handled for success
      * or failure calls.
      */
     @GET("top-headlines")
     suspend fun getArticles(
-        @Query("country") countryCode: String = "us",
-        @Query("page") page: Int = 1,
-        @Query("apiKey") apiKey: String = BuildConfig.NEWS_API_KEY
+        @Query("country") countryCode: String = DEFAULT_COUNTRY_CODE,
+        @Query("page") page: Int = DEFAULT_PAGE,
+        @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
+        @Query("apiKey") apiKey: String = API_KEY
     ): Response<NewsAPIResponse>
 
     /**
@@ -42,13 +65,22 @@ interface NewsAPI {
      * As query parameters; country, page, pageSize, language, source, etc can be used. For all
      * parameters https://newsapi.org/docs/endpoints/everything url can be visited.
      *
+     * Parameters:
+     *
+     * [query]: Keywords or phrases to search for in the article title and body.
+     *
+     * [page]: Use this to page through the results. Default: 1
+     *
+     * [pageSize]: The number of results to return per page. Default: 20. Maximum: 100.
+     *
      * @return NewsAPIResponse object with retrofit2.Response which then can be handled for success
      * or failure calls.
      */
     @GET("everything")
     suspend fun searchArticles(
         @Query("q") query: String,
-        @Query("page") page: Int = 1,
-        @Query("apiKey") apiKey: String = BuildConfig.NEWS_API_KEY
+        @Query("page") page: Int = DEFAULT_PAGE,
+        @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
+        @Query("apiKey") apiKey: String = API_KEY
     ): Response<NewsAPIResponse>
 }

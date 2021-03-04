@@ -3,7 +3,7 @@ package ercanduman.newsapidemo.data.network.model
 import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ercanduman.newsapidemo.Constants
+import ercanduman.newsapidemo.data.network.NewsAPI
 import kotlinx.parcelize.Parcelize
 
 /**
@@ -35,5 +35,5 @@ data class Article(
     val title: String? = "",
     val urlToImage: String? = "",
     val isSaved: Boolean = false,
-    @PrimaryKey val url: String = Constants.DEFAULT_URL
+    @PrimaryKey val url: String = NewsAPI.DEFAULT_URL
 ) : Parcelable
