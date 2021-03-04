@@ -9,10 +9,12 @@ import retrofit2.Response
 import javax.inject.Inject
 
 /**
- * The middle class that connects to different data sources and provides data for ViewModel.
+ * Abstraction layer which is a mediator and responsible to retrieve data from different data
+ * sources and provides data for ViewModel.
+ * Different data sources means Room database for caching or Retrofit for remote networking data.
  *
- * @author ercan
- * @since  2/27/21
+ * @author ercanduman
+ * @since  27.02.2021
  */
 class AppRepository @Inject constructor(private val api: NewsAPI, private val dao: ArticleDao) {
 
@@ -30,7 +32,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
         safeApiCall { api.searchArticles(query, page) }
 
     /**
-     * Handles API response and based on result returns respective ApiEvent
+     * Handles API response based on result and returns respective ApiEvent
      */
     private suspend fun safeApiCall(apiCall: suspend () -> Response<NewsAPIResponse>): ApiEvent =
         try {
@@ -43,7 +45,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
                     ApiEvent.Empty
                 }
             } else {
-                ApiEvent.Error("Error: ${result.message()} - ${result.errorBody()} Code: ${result.code()}")
+                ApiEvent.Error("Code: ${result.code()} Error: ${result.message()} - ${result.errorBody()}")
             }
         } catch (e: Exception) {
             ApiEvent.Error(e.message ?: "An unknown error occurred...")
