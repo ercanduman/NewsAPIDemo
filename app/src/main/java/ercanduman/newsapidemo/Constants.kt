@@ -16,6 +16,8 @@ object Constants {
     /* UI related constants */
     internal const val SEARCH_TIME_DELAY = 500L
 
+    internal const val DEFAULT_URL = "https://github.com/ercanduman/NewsAPIDemo"
+
     /* DB related constants */
     internal const val DATABASE_NAME = "app_database"
     internal const val DATABASE_VERSION = 1

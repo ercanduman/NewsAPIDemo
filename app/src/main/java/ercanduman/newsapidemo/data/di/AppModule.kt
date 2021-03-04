@@ -16,16 +16,22 @@ import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
 
 /**
- * Contains & creates objects which available during lifecycle of application.
+ * Tells Dagger how to generate instance of objects.
  *
  * Most of these objects should have only single instance. Kotlin "object" keyword provides
  * this feature.
  *
+ * Annotating as InstallIn declares which component(s) the annotated class should be included in
+ * when Hilt generates the components.
+ *
  * SingletonComponent: A Hilt component for singleton bindings and objects will be bind to the
  * lifecycle of application.
  *
- * @author ercan
- * @since  2/27/21
+ * @Module means this is a Dagger-Hilt module attached the lifecycle of component that
+ * mentioned in InstallIn.
+ *
+ * @author ercanduman
+ * @since  27.02.2021
  */
 @Module
 @InstallIn(SingletonComponent::class)
@@ -36,6 +42,8 @@ object AppModule {
      *
      * NewsAPI instance created by Retrofit which is responsible for implementation of the
      * API endpoints defined by the NewsAPI service interface.
+     *
+     * GsonConverterFactory added which is a converter that uses Gson for JSON.
      *
      * @Singleton annotation identifies a type that the injector only instantiates once.
      */
