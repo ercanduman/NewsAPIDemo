@@ -25,6 +25,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
+/**
+ * Displays all breaking news articles in RecyclerView. Also contains functionality for searching
+ * articles based on search query typed inside app bar.
+ *
+ * @author ercanduman
+ * @since  27.02.2021
+ */
 @AndroidEntryPoint
 class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClicked {
 
