@@ -9,7 +9,6 @@ import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.data.repository.AppRepository
-import ercanduman.newsapidemo.util.ApiEvent
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -49,17 +48,22 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
     }
 
     /**
+     * Retrieves Breaking news by communicating to AppRepository
+     *
+     * cachedIn: The flow is kept active as long as the given scope is active.
+     * To avoid memory leaks, make sure to use a scope that is already managed (like a ViewModel
+     * scope) or manually cancel it when you don't need paging anymore.
+     */
+    fun getBreakingNewsArticles() = viewModelScope.launch {
+        repository.getArticles().cachedIn(viewModelScope).collect {
+            _articles.value = it
+        }
+    }
+
+    /**
      * Sends parameterized article object to AppRepository to save it locally.
      */
     fun saveArticleClicked(article: Article) = viewModelScope.launch {
         repository.insert(article.copy(isSaved = true))
     }
-
-    /**
-     * Retrieves Breaking news by communicating to AppRepository
-     */
-    /*fun getBreakingNewsArticles() = viewModelScope.launch {
-        _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.getArticles()
-    }*/
 }

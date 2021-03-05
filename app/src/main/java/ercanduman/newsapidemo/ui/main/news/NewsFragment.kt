@@ -62,6 +62,9 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     }
 
     private fun handleApiData() {
+        // Display breaking news initially
+        viewModel.getBreakingNewsArticles()
+
         viewModel.articles.observe(viewLifecycleOwner) {
             showContent(true)
             newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
