@@ -1,7 +1,7 @@
 package ercanduman.newsapidemo.data.repository
 
 import ercanduman.newsapidemo.data.db.dao.ArticleDao
-import ercanduman.newsapidemo.data.internal.SafeApiCall
+import ercanduman.newsapidemo.data.internal.safeApiCall
 import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.util.ApiEvent
@@ -27,21 +27,20 @@ import javax.inject.Singleton
  * @since  27.02.2021
  */
 @Singleton
-class AppRepository @Inject constructor(private val api: NewsAPI, private val dao: ArticleDao) :
-    SafeApiCall() {
+class AppRepository @Inject constructor(private val api: NewsAPI, private val dao: ArticleDao) {
 
     /**
      * Gets breaking news from API.
      *
      * Connects NewsAPI, gets data and returns ApiExecutionEvent
      */
-    suspend fun getArticles(page: Int): ApiEvent = apiCall { api.getArticles(page = page) }
+    suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
 
     /**
      * Searches for articles based on query text.
      */
     suspend fun searchArticles(query: String, page: Int): ApiEvent =
-        apiCall { api.searchArticles(query, page) }
+        safeApiCall { api.searchArticles(query, page) }
 
     fun getSavedArticles() = dao.getSavedArticles()
     suspend fun insert(article: Article) = dao.insert(article)

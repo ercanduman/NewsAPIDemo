@@ -5,29 +5,30 @@ import ercanduman.newsapidemo.util.ApiEvent
 import retrofit2.Response
 
 /**
- * Surround API call with try-catch block and returns and ApiEvent based on execution result.
+ * Surround API call with try-catch block, handles API response and returns an ApiEvent based on
+ * execution result.
+ *
+ * Inline functions are used to save us memory overhead by preventing object allocations for
+ * the anonymous functions/lambda expressions called. Instead, it provides that functions body to
+ * the function that calls it at runtime. This increases the bytecode size slightly but saves us
+ * a lot of memory.
  *
  * @author ercanduman
  * @since  05.03.2021
  */
-abstract class SafeApiCall {
-    /**
-     * Handles API response based on result and returns respective ApiEvent
-     */
-    internal suspend fun apiCall(apiCall: suspend () -> Response<NewsAPIResponse>): ApiEvent =
-        try {
-            val result = apiCall.invoke()
-            if (result.isSuccessful) {
-                val resultBody = result.body()
-                if (resultBody != null && resultBody.articles.isNotEmpty()) {
-                    ApiEvent.Success(resultBody.articles)
-                } else {
-                    ApiEvent.Empty
-                }
+inline fun safeApiCall(apiCall: () -> Response<NewsAPIResponse>): ApiEvent =
+    try {
+        val result = apiCall.invoke()
+        if (result.isSuccessful) {
+            val resultBody = result.body()
+            if (resultBody != null && resultBody.articles.isNotEmpty()) {
+                ApiEvent.Success(resultBody.articles)
             } else {
-                ApiEvent.Error("Code: ${result.code()} Error: ${result.message()} - ${result.errorBody()}")
+                ApiEvent.Empty
             }
-        } catch (e: Exception) {
-            ApiEvent.Error(e.message ?: "An unknown error occurred...")
+        } else {
+            ApiEvent.Error("Code: ${result.code()} Error: ${result.message()} - ${result.errorBody()}")
         }
-}
+    } catch (e: Exception) {
+        ApiEvent.Error(e.message ?: "An unknown error occurred...")
+    }
