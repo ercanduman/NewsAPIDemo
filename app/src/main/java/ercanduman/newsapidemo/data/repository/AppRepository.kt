@@ -1,10 +1,16 @@
 package ercanduman.newsapidemo.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.data.db.dao.ArticleDao
+import ercanduman.newsapidemo.data.internal.ArticlePagingSource
 import ercanduman.newsapidemo.data.internal.safeApiCall
 import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.util.ApiEvent
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,13 +40,22 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
      *
      * Connects NewsAPI, gets data and returns ApiExecutionEvent
      */
-    suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
+    suspend fun getArticles(): ApiEvent = safeApiCall { api.getArticles() }
 
     /**
      * Searches for articles based on query text.
      */
-    suspend fun searchArticles(query: String, page: Int): ApiEvent =
-        safeApiCall { api.searchArticles(query, page) }
+    fun searchArticles(query: String): Flow<PagingData<Article>> {
+        val pagingConfig = PagingConfig(
+            pageSize = Constants.DEFAULT_PAGE_SIZE,
+            maxSize = Constants.DEFAULT_MAX_SIZE,
+            enablePlaceholders = false
+        )
+
+        return Pager(
+            config = pagingConfig,
+            pagingSourceFactory = { ArticlePagingSource(api, query) }).flow
+    }
 
     fun getSavedArticles() = dao.getSavedArticles()
     suspend fun insert(article: Article) = dao.insert(article)
