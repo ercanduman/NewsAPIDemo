@@ -45,7 +45,10 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
     /**
      * Searches for articles based on query text.
      */
-    fun searchArticles(query: String): Flow<PagingData<Article>> {
+    suspend fun searchArticles(query: String, page: Int): ApiEvent =
+        safeApiCall { api.searchArticles(query, page) }
+
+    fun searchArticlesPaging(query: String): Flow<PagingData<Article>> {
         val pagingConfig = PagingConfig(
             pageSize = Constants.DEFAULT_PAGE_SIZE,
             maxSize = Constants.DEFAULT_MAX_SIZE,

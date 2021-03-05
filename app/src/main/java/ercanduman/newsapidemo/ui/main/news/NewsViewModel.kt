@@ -37,7 +37,7 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
      */
     fun getBreakingNewsArticles() = viewModelScope.launch {
         _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.getArticles(DEFAULT_PAGE)
+        _apiEvent.value = repository.getArticles()
     }
 
     /**
