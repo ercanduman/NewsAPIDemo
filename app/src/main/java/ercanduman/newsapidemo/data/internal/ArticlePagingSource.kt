@@ -2,21 +2,21 @@ package ercanduman.newsapidemo.data.internal
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.util.ApiEvent
 
 /**
  * Class that knows how to fetch data from REST API and turns data into pages.
  *
- * Wont use dagger to inject these parameters, because [searchQuery] is changeable and known only
+ * Wont use dagger to inject these parameters, because searchQuery is changeable and known only
  * at runtime.
  *
  * @author ercanduman
  * @since  05.03.2021
  */
-class ArticlePagingSource(private val api: NewsAPI, private val searchQuery: String) :
-    PagingSource<Int, Article>() {
+class ArticlePagingSource(
+    private val func: suspend (position: Int, loadSize: Int) -> ApiEvent
+) : PagingSource<Int, Article>() {
 
     /**
      * Triggers api request and turns data into pages.
@@ -26,7 +26,7 @@ class ArticlePagingSource(private val api: NewsAPI, private val searchQuery: Str
         val position = params.key ?: STARTING_PAGE_INDEX
 
         // call api
-        return when (val apiEvent = callApiAndGetApiEvent(position, params)) {
+        return when (val apiEvent = func.invoke(position, params.loadSize)) {
             is ApiEvent.Error -> LoadResult.Error(Throwable(apiEvent.message))
             is ApiEvent.Success -> LoadResult.Page(
                 data = apiEvent.data,
@@ -36,10 +36,6 @@ class ArticlePagingSource(private val api: NewsAPI, private val searchQuery: Str
             else -> LoadResult.Error(Throwable("No Data Found."))
         }
     }
-
-    private suspend fun callApiAndGetApiEvent(position: Int, params: LoadParams<Int>): ApiEvent =
-        safeApiCall { api.searchArticles(searchQuery, position, params.loadSize) }
-
 
     override fun getRefreshKey(state: PagingState<Int, Article>): Int? {
         return null
