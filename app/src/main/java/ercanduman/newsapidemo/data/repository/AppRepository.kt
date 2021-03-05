@@ -48,11 +48,11 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
     suspend fun searchArticles(query: String, page: Int): ApiEvent =
         safeApiCall { api.searchArticles(query, page) }
 
-    fun searchArticlesPaging(query: String): Flow<PagingData<Article>> {
+    fun searchArticlesPagination(query: String): Flow<PagingData<Article>> {
         val pagingConfig = PagingConfig(
-            pageSize = Constants.DEFAULT_PAGE_SIZE,
             maxSize = Constants.DEFAULT_MAX_SIZE,
-            enablePlaceholders = false
+            pageSize = Constants.DEFAULT_PAGE_SIZE,
+            enablePlaceholders = false // displaying placeholder for object not loaded yet.
         )
 
         return Pager(

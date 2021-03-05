@@ -17,12 +17,9 @@ import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
-import ercanduman.newsapidemo.util.ApiEvent
 import ercanduman.newsapidemo.util.hide
-import ercanduman.newsapidemo.util.log
 import ercanduman.newsapidemo.util.show
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 /**
@@ -56,18 +53,8 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         itemAnimator = null
     }
 
-    private fun handleApiData() = viewLifecycleOwner.lifecycleScope.launch {
-        viewModel.getBreakingNewsArticles()
-
-        viewModel.apiEvent.collect { event ->
-            when (event) {
-                is ApiEvent.Empty -> showContent(message = getString(R.string.no_data_found))
-                is ApiEvent.Success -> setData(event.data)
-                is ApiEvent.Loading -> showLoading()
-                is ApiEvent.Error ->
-                    showContent(message = getString(R.string.execution_failure, event.message))
-            }
-        }
+    private fun handleApiData() {
+        viewModel.articles.observe(viewLifecycleOwner) { setData(it) }
     }
 
     private fun showLoading() {
@@ -80,10 +67,9 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         binding.swipeToRefresh.isRefreshing = false
     }
 
-    private fun setData(data: List<Article>) {
+    private fun setData(data: PagingData<Article>) {
         showContent(true)
-        log("Article list size: ${data.size}")
-        newsAdapter.submitData(viewLifecycleOwner.lifecycle, PagingData.from(data))
+        newsAdapter.submitData(viewLifecycleOwner.lifecycle, data)
     }
 
     private fun applyRetryOption() {
@@ -144,7 +130,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
              */
             viewLifecycleOwner.lifecycleScope.launch {
                 delay(Constants.SEARCH_TIME_DELAY)
-                viewModel.searchForArticles(newText)
+                viewModel.searchArticlesPaging(newText)
             }
             true
         } else false

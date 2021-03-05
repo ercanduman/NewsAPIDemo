@@ -1,13 +1,16 @@
 package ercanduman.newsapidemo.ui.main.news
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.data.repository.AppRepository
 import ercanduman.newsapidemo.util.ApiEvent
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -29,23 +32,20 @@ import javax.inject.Inject
 @HiltViewModel
 class NewsViewModel @Inject constructor(private val repository: AppRepository) : ViewModel() {
 
-    private val _apiEvent = MutableStateFlow<ApiEvent>(ApiEvent.Empty)
-    val apiEvent: StateFlow<ApiEvent> = _apiEvent
+    private val _articles = MutableLiveData<PagingData<Article>>()
+    val articles: LiveData<PagingData<Article>> = _articles
 
     /**
-     * Retrieves Breaking news by communicating to AppRepository
+     * Loads data for query parameter and passed new data to [_articles] mutable live data.
+     *
+     * cachedIn: The flow is kept active as long as the given scope is active.
+     * To avoid memory leaks, make sure to use a scope that is already managed (like a ViewModel
+     * scope) or manually cancel it when you don't need paging anymore.
      */
-    fun getBreakingNewsArticles() = viewModelScope.launch {
-        _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.getArticles()
-    }
-
-    /**
-     * Gets data for [searchQuery] by calling AppRepository.
-     */
-    fun searchForArticles(searchQuery: String) = viewModelScope.launch {
-        _apiEvent.value = ApiEvent.Loading
-        _apiEvent.value = repository.searchArticles(searchQuery, DEFAULT_PAGE)
+    fun searchArticlesPaging(query: String) = viewModelScope.launch {
+        repository.searchArticlesPagination(query)
+            .cachedIn(viewModelScope)
+            .collect { _articles.value = it }
     }
 
     /**
@@ -55,7 +55,11 @@ class NewsViewModel @Inject constructor(private val repository: AppRepository) :
         repository.insert(article.copy(isSaved = true))
     }
 
-    companion object {
-        private const val DEFAULT_PAGE = 1
-    }
+    /**
+     * Retrieves Breaking news by communicating to AppRepository
+     */
+    /*fun getBreakingNewsArticles() = viewModelScope.launch {
+        _apiEvent.value = ApiEvent.Loading
+        _apiEvent.value = repository.getArticles()
+    }*/
 }
