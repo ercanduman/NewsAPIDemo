@@ -1,6 +1,7 @@
 package ercanduman.newsapidemo.data.network
 
 import ercanduman.newsapidemo.BuildConfig
+import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
 import retrofit2.Response
 import retrofit2.http.GET
@@ -24,11 +25,7 @@ interface NewsAPI {
      */
     companion object {
         /* API related constants */
-        internal const val API_KEY = BuildConfig.NEWS_API_KEY
-        internal const val BASE_URL = "https://newsapi.org/v2/"
-        internal const val DEFAULT_PAGE = 1
-        internal const val DEFAULT_PAGE_SIZE = 20
-        internal const val DEFAULT_COUNTRY_CODE = "us"
+        private const val API_KEY = BuildConfig.NEWS_API_KEY
     }
 
     /**
@@ -50,9 +47,9 @@ interface NewsAPI {
      */
     @GET("top-headlines")
     suspend fun getArticles(
-        @Query("country") countryCode: String = DEFAULT_COUNTRY_CODE,
-        @Query("page") page: Int = DEFAULT_PAGE,
-        @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = Constants.DEFAULT_PAGE,
+        @Query("pageSize") pageSize: Int = Constants.DEFAULT_PAGE_SIZE,
+        @Query("country") countryCode: String = Constants.DEFAULT_COUNTRY_CODE,
         @Query("apiKey") apiKey: String = API_KEY
     ): Response<NewsAPIResponse>
 
@@ -76,8 +73,8 @@ interface NewsAPI {
     @GET("everything")
     suspend fun searchArticles(
         @Query("q") query: String,
-        @Query("page") page: Int = DEFAULT_PAGE,
-        @Query("pageSize") pageSize: Int = DEFAULT_PAGE_SIZE,
+        @Query("page") page: Int = Constants.DEFAULT_PAGE,
+        @Query("pageSize") pageSize: Int = Constants.DEFAULT_PAGE_SIZE,
         @Query("apiKey") apiKey: String = API_KEY
     ): Response<NewsAPIResponse>
 }

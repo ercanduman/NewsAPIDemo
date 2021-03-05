@@ -1,11 +1,15 @@
 package ercanduman.newsapidemo.data.repository
 
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.data.db.dao.ArticleDao
+import ercanduman.newsapidemo.data.internal.ArticlePagingSource
+import ercanduman.newsapidemo.data.internal.safeApiCall
 import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
-import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
-import ercanduman.newsapidemo.util.ApiEvent
-import retrofit2.Response
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -33,35 +37,47 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
     /**
      * Gets breaking news from API.
      *
-     * Connects NewsAPI, gets data and returns ApiExecutionEvent
+     * Connects NewsAPI, gets data and passes this data to ArticlePagingSource for pagination.
+     *
+     * And returns flow of PagingData
      */
-    suspend fun getArticles(page: Int): ApiEvent = safeApiCall { api.getArticles(page = page) }
+    suspend fun getArticles(): Flow<PagingData<Article>> {
+        return Pager(
+            config = generatePagingConfig(),
+            pagingSourceFactory = {
+                ArticlePagingSource { position, loadSize ->
+                    safeApiCall { api.getArticles(position, loadSize) }
+                }
+            }
+        ).flow
+    }
 
     /**
      * Searches for articles based on query text.
+     *
+     * Connects NewsAPI, gets data and passes this data to ArticlePagingSource for pagination.
+     *
+     * And returns flow of PagingData
      */
-    suspend fun searchArticles(query: String, page: Int): ApiEvent =
-        safeApiCall { api.searchArticles(query, page) }
+    fun searchArticlesPagination(query: String): Flow<PagingData<Article>> {
+        return Pager(
+            config = generatePagingConfig(),
+            pagingSourceFactory = {
+                ArticlePagingSource { position, size ->
+                    safeApiCall { api.searchArticles(query, position, size) }
+                }
+            }).flow
+    }
 
     /**
-     * Handles API response based on result and returns respective ApiEvent
+     * Generates default PagingConfig for and eliminates duplicated codes for re-usages.
      */
-    private suspend fun safeApiCall(apiCall: suspend () -> Response<NewsAPIResponse>): ApiEvent =
-        try {
-            val result = apiCall.invoke()
-            if (result.isSuccessful) {
-                val resultBody = result.body()
-                if (resultBody != null && resultBody.articles.isNotEmpty()) {
-                    ApiEvent.Success(resultBody.articles)
-                } else {
-                    ApiEvent.Empty
-                }
-            } else {
-                ApiEvent.Error("Code: ${result.code()} Error: ${result.message()} - ${result.errorBody()}")
-            }
-        } catch (e: Exception) {
-            ApiEvent.Error(e.message ?: "An unknown error occurred...")
-        }
+    private fun generatePagingConfig() = PagingConfig(
+        maxSize = Constants.DEFAULT_MAX_SIZE,
+        pageSize = Constants.DEFAULT_PAGE_SIZE,
+        enablePlaceholders = false // displaying placeholder for object not loaded yet.
+    )
+
 
     fun getSavedArticles() = dao.getSavedArticles()
     suspend fun insert(article: Article) = dao.insert(article)
