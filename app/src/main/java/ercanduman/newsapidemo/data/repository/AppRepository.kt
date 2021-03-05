@@ -1,6 +1,7 @@
 package ercanduman.newsapidemo.data.repository
 
 import ercanduman.newsapidemo.data.db.dao.ArticleDao
+import ercanduman.newsapidemo.data.internal.SafeApiCall
 import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.util.ApiEvent

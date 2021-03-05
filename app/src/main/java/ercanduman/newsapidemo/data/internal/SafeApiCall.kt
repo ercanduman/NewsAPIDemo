@@ -1,4 +1,4 @@
-package ercanduman.newsapidemo.data.repository
+package ercanduman.newsapidemo.data.internal
 
 import ercanduman.newsapidemo.data.network.response.NewsAPIResponse
 import ercanduman.newsapidemo.util.ApiEvent
