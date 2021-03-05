@@ -10,7 +10,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
-import androidx.paging.PagingData
 import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.R
@@ -33,19 +32,28 @@ import kotlinx.coroutines.launch
 class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClicked {
 
     private val viewModel: NewsViewModel by viewModels()
-    private lateinit var binding: FragmentNewsBinding
     private val newsAdapter = NewsAdapter(this)
+
+    /**
+     * Need to be careful when viewBinding used in a fragment. Because, view of a fragment can be
+     * destroyed while fragment itself stays in memory. So [binding] field should be cleared during
+     * onDestroyView called, otherwise unnecessary view references will kept. Which causes memory
+     * leak.
+     */
+    private var _binding: FragmentNewsBinding? = null
+
+    // This property is only valid between onCreateView and onDestroyView.
+    private val binding: FragmentNewsBinding = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding = FragmentNewsBinding.bind(view)
+        _binding = FragmentNewsBinding.bind(view)
 
         initRecyclerView()
         handleApiData()
         applyRetryOption()
         setHasOptionsMenu(true)
     }
-
 
     private fun initRecyclerView() = binding.recyclerView.apply {
         adapter = newsAdapter
@@ -54,7 +62,10 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     }
 
     private fun handleApiData() {
-        viewModel.articles.observe(viewLifecycleOwner) { setData(it) }
+        viewModel.articles.observe(viewLifecycleOwner) {
+            showContent(true)
+            newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+        }
     }
 
     private fun showLoading() {
@@ -65,11 +76,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     private fun hideLoading() {
         binding.progressBar.hide()
         binding.swipeToRefresh.isRefreshing = false
-    }
-
-    private fun setData(data: PagingData<Article>) {
-        showContent(true)
-        newsAdapter.submitData(viewLifecycleOwner.lifecycle, data)
     }
 
     private fun applyRetryOption() {
@@ -138,5 +144,10 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     override fun articleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
