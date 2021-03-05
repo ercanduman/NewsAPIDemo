@@ -12,6 +12,12 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import dagger.hilt.android.AndroidEntryPoint
 import ercanduman.newsapidemo.R
 
+/**
+ * This is base activity which stores all fragments via Navigation component.
+ *
+ * @AndroidEntryPoint marks an Android component class to be setup for injection with the standard
+ * Hilt Dagger Android components.
+ */
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
