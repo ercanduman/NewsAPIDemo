@@ -63,11 +63,21 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
             when (event) {
                 is ApiEvent.Empty -> showContent(message = getString(R.string.no_data_found))
                 is ApiEvent.Success -> setData(event.data)
-                is ApiEvent.Loading -> binding.progressBar.show()
+                is ApiEvent.Loading -> showLoading()
                 is ApiEvent.Error ->
                     showContent(message = getString(R.string.execution_failure, event.message))
             }
         }
+    }
+
+    private fun showLoading() {
+        binding.progressBar.show()
+        binding.swipeToRefresh.isRefreshing = true
+    }
+
+    private fun hideLoading() {
+        binding.progressBar.hide()
+        binding.swipeToRefresh.isRefreshing = false
     }
 
     private fun setData(data: List<Article>) {
@@ -83,7 +93,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
             binding.apply {
                 val isRefresh = loadState.source.refresh
                 when (isRefresh) {
-                    is LoadState.Loading -> progressBar.show()
+                    is LoadState.Loading -> showLoading()
                     is LoadState.NotLoading -> showContent(true)
                     is LoadState.Error -> showContent(false)
                 }
@@ -100,7 +110,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
     private fun showContent(contentAvailable: Boolean = false, message: String = "") {
         binding.apply {
-            progressBar.hide()
             if (contentAvailable) {
                 recyclerView.show()
                 retryContent.hide()
@@ -109,6 +118,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                 retryContent.show()
                 textViewError.text = message
             }
+            hideLoading()
         }
     }
 
