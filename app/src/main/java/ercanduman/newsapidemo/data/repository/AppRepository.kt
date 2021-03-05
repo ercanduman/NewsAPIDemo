@@ -9,7 +9,6 @@ import ercanduman.newsapidemo.data.internal.ArticlePagingSource
 import ercanduman.newsapidemo.data.internal.safeApiCall
 import ercanduman.newsapidemo.data.network.NewsAPI
 import ercanduman.newsapidemo.data.network.model.Article
-import ercanduman.newsapidemo.util.ApiEvent
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -38,27 +37,47 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
     /**
      * Gets breaking news from API.
      *
-     * Connects NewsAPI, gets data and returns ApiExecutionEvent
+     * Connects NewsAPI, gets data and passes this data to ArticlePagingSource for pagination.
+     *
+     * And returns flow of PagingData
      */
-    suspend fun getArticles(): ApiEvent = safeApiCall { api.getArticles() }
+    suspend fun getArticles(): Flow<PagingData<Article>> {
+        return Pager(
+            config = generatePagingConfig(),
+            pagingSourceFactory = {
+                ArticlePagingSource { position, loadSize ->
+                    safeApiCall { api.getArticles(position, loadSize) }
+                }
+            }
+        ).flow
+    }
 
     /**
      * Searches for articles based on query text.
+     *
+     * Connects NewsAPI, gets data and passes this data to ArticlePagingSource for pagination.
+     *
+     * And returns flow of PagingData
      */
-    suspend fun searchArticles(query: String, page: Int): ApiEvent =
-        safeApiCall { api.searchArticles(query, page) }
-
     fun searchArticlesPagination(query: String): Flow<PagingData<Article>> {
-        val pagingConfig = PagingConfig(
-            maxSize = Constants.DEFAULT_MAX_SIZE,
-            pageSize = Constants.DEFAULT_PAGE_SIZE,
-            enablePlaceholders = false // displaying placeholder for object not loaded yet.
-        )
-
         return Pager(
-            config = pagingConfig,
-            pagingSourceFactory = { ArticlePagingSource(api, query) }).flow
+            config = generatePagingConfig(),
+            pagingSourceFactory = {
+                ArticlePagingSource { position, size ->
+                    safeApiCall { api.searchArticles(query, position, size) }
+                }
+            }).flow
     }
+
+    /**
+     * Generates default PagingConfig for and eliminates duplicated codes for re-usages.
+     */
+    private fun generatePagingConfig() = PagingConfig(
+        maxSize = Constants.DEFAULT_MAX_SIZE,
+        pageSize = Constants.DEFAULT_PAGE_SIZE,
+        enablePlaceholders = false // displaying placeholder for object not loaded yet.
+    )
+
 
     fun getSavedArticles() = dao.getSavedArticles()
     suspend fun insert(article: Article) = dao.insert(article)

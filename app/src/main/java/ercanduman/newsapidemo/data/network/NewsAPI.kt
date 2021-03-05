@@ -47,9 +47,9 @@ interface NewsAPI {
      */
     @GET("top-headlines")
     suspend fun getArticles(
-        @Query("country") countryCode: String = Constants.DEFAULT_COUNTRY_CODE,
         @Query("page") page: Int = Constants.DEFAULT_PAGE,
         @Query("pageSize") pageSize: Int = Constants.DEFAULT_PAGE_SIZE,
+        @Query("country") countryCode: String = Constants.DEFAULT_COUNTRY_CODE,
         @Query("apiKey") apiKey: String = API_KEY
     ): Response<NewsAPIResponse>
 
