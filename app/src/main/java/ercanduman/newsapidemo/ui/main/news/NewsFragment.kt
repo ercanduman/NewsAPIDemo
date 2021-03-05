@@ -43,7 +43,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     private var _binding: FragmentNewsBinding? = null
 
     // This property is only valid between onCreateView and onDestroyView.
-    private val binding: FragmentNewsBinding = _binding!!
+    private val binding: FragmentNewsBinding get() = _binding!!
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
