@@ -27,7 +27,7 @@ inline fun safeApiCall(apiCall: () -> Response<NewsAPIResponse>): ApiEvent =
                 ApiEvent.Empty
             }
         } else {
-            ApiEvent.Error("Code: ${result.code()} Error: ${result.message()} - ${result.errorBody()}")
+            ApiEvent.Error("Code: ${result.code()} - Error: ${result.message()} - ${result.errorBody()}")
         }
     } catch (e: Exception) {
         ApiEvent.Error(e.message ?: "An unknown error occurred...")
