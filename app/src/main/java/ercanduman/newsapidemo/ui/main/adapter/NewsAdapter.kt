@@ -42,7 +42,9 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
      * ViewHolder is a subclass which holds references to the views. A ViewHolder describes an item
      * view and metadata about its place within the RecyclerView.
      *
-     * "inner" means this class can use outer class' member and fields.
+     * "inner" means this class can use outer class' properties. This makes inner class tightly
+     * coupled to surrounding class, but it is ok because they belong together and viewHolder will
+     * be used only in this particular adapter.
      */
     inner class NewsViewHolder(private val binding: ListItemArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
