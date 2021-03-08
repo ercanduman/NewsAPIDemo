@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
-import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
@@ -19,7 +18,6 @@ import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
 import ercanduman.newsapidemo.ui.main.adapter.PagingLoadStateAdapter
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
@@ -129,25 +127,34 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         val searchView: SearchView =
             menu.findItem(R.id.action_search_news).actionView as SearchView
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean = searchForArticles(newText)
+            override fun onQueryTextSubmit(query: String?): Boolean =
+                if (query != null) {
+                    /**
+                     * Hide keyboard after submit button clicked.
+                     */
+                    searchView.clearFocus()
+                    searchForArticles(query)
+                    true
+                } else false
+
+            override fun onQueryTextChange(newText: String?): Boolean = false
         })
     }
 
-    private fun searchForArticles(newText: String?) =
-        if (newText != null && newText.length > 3) {
-            /**
-             * If text is not null and has at least 3 characters, then wait for a little
-             * and call API for new search query.
-             *
-             * This way api will not called for every characters written to search field.
-             */
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(Constants.SEARCH_TIME_DELAY)
-                viewModel.searchArticlesPaging(newText)
-            }
-            true
-        } else false
+    /**
+     * Search for articles when submit button clicked. This way api will not called for every
+     * character written to search field.
+     */
+    private fun searchForArticles(newText: String) {
+        viewLifecycleOwner.lifecycleScope.launch { viewModel.searchArticlesPaging(newText) }
+
+        /**
+         *  If old and new lists have similar items, it can happen that scroll position stays
+         *  same. scrollToPosition is make sure that always jump to the top.
+         */
+        binding.recyclerView.scrollToPosition(0)
+    }
+
 
     override fun articleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
