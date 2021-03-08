@@ -16,6 +16,7 @@ import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
+import ercanduman.newsapidemo.ui.main.adapter.PagingLoadStateAdapter
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
 import kotlinx.coroutines.delay
@@ -51,15 +52,20 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
         initRecyclerView()
         handleApiData()
-        applyRetryOption()
+        // applyRetryOption()
         setHasOptionsMenu(true)
     }
 
     private fun initRecyclerView() = binding.recyclerView.apply {
-        adapter = newsAdapter
         setHasFixedSize(true)
         itemAnimator = null
+        adapter = newsAdapter.withLoadStateHeaderAndFooter(
+            header = loadStateAdapter,
+            footer = loadStateAdapter
+        )
     }
+
+    private val loadStateAdapter = PagingLoadStateAdapter { newsAdapter.retry() }
 
     private fun handleApiData() {
         // Display breaking news initially
@@ -83,7 +89,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
     private fun applyRetryOption() {
         binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
-        // TODO: 2/27/21 apply retry mechanism for -> newsAdapter.withLoadStateHeaderAndFooter()
         newsAdapter.addLoadStateListener { loadState ->
             binding.apply {
                 val isRefresh = loadState.source.refresh
