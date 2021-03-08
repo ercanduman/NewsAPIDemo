@@ -19,4 +19,5 @@
     <string name="linkedin">LinkedIn</string>
     <string name="github">GitHub</string>
     <string name="e_mail">E-mail</string>
+    <string name="error_not_loaded">Results could not be loaded</string>
 </resources>
