@@ -5,6 +5,7 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -50,12 +51,14 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
         initRecyclerView()
         handleApiData()
-        // applyRetryOption()
+        applyRetryOption()
         setHasOptionsMenu(true)
     }
 
     private fun initRecyclerView() = binding.recyclerView.apply {
         setHasFixedSize(true)
+        /* If old and new lists have similar items, then these items moves around via animations,
+        * since there is no updating for items, animations can be removed by setting to null. */
         itemAnimator = null
         adapter = newsAdapter.withLoadStateHeaderAndFooter(
             header = loadStateAdapter,
@@ -70,28 +73,17 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         viewModel.getBreakingNewsArticles()
 
         viewModel.articles.observe(viewLifecycleOwner) {
-            showContent(true)
             newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
+            showContent(newsAdapter.itemCount > 0)
         }
     }
 
-    private fun showLoading() {
-        binding.progressBar.show()
-        binding.swipeToRefresh.isRefreshing = true
-    }
-
-    private fun hideLoading() {
-        binding.progressBar.hide()
-        binding.swipeToRefresh.isRefreshing = false
-    }
-
     private fun applyRetryOption() {
-        binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
         newsAdapter.addLoadStateListener { loadState ->
             binding.apply {
                 val isRefresh = loadState.source.refresh
                 when (isRefresh) {
-                    is LoadState.Loading -> showLoading()
+                    is LoadState.Loading -> binding.progressBar.show()
                     is LoadState.NotLoading -> showContent(true)
                     is LoadState.Error -> showContent(false)
                 }
@@ -101,6 +93,11 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                     showContent(message = getString(R.string.no_data_found))
                 } else {
                     showContent(true)
+                }
+                binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
+                swipeToRefresh.apply {
+                    isRefreshing = progressBar.isVisible
+                    setOnRefreshListener { newsAdapter.retry() }
                 }
             }
         }
@@ -116,7 +113,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                 retryContent.show()
                 textViewError.text = message
             }
-            hideLoading()
+            progressBar.hide()
         }
     }
 
