@@ -105,7 +105,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
     private fun showContent(contentAvailable: Boolean = false, message: String = "") {
         binding.apply {
-            if (contentAvailable) {
+            if (contentAvailable && newsAdapter.itemCount > 0) {
                 recyclerView.show()
                 retryContent.hide()
             } else {

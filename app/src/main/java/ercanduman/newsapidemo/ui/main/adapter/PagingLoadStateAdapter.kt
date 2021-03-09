@@ -54,7 +54,8 @@ class PagingLoadStateAdapter(private val retryFunction: () -> Unit) :
 
         fun bindData(loadState: LoadState) {
             binding.apply {
-                btnRetry.isVisible = loadState is LoadState.Loading
+                root.isVisible = loadState is LoadState.Error
+                progressBar.isVisible = loadState is LoadState.Loading
                 btnRetry.isVisible = loadState !is LoadState.Loading
                 tvFooterError.isVisible = loadState !is LoadState.Loading
             }
