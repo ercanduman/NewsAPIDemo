@@ -22,7 +22,7 @@ import ercanduman.newsapidemo.databinding.ListItemArticleBinding
  * @author ercanduman
  * @since  27.02.2021
  */
-class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
+class NewsAdapter(private val onArticleClickListener: OnArticleClickListener) :
     PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(ARTICLE_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -54,7 +54,7 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
                 val adapterPosition = bindingAdapterPosition
                 if (adapterPosition != RecyclerView.NO_POSITION) {
                     val currentArticle = getItem(adapterPosition)
-                    if (currentArticle != null) onArticleClicked.articleClicked(currentArticle)
+                    if (currentArticle != null) onArticleClickListener.articleClicked(currentArticle)
                 }
             }
         }
@@ -112,7 +112,12 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
         }
     }
 
-    interface OnArticleClicked {
+    /**
+     * This is an interface for listening and forwarding item clicks in fragments.
+     *
+     * Fragments will implement this listener and can handle functionality in [articleClicked] method.
+     */
+    interface OnArticleClickListener {
         fun articleClicked(article: Article)
     }
 }

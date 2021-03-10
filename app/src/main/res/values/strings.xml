@@ -12,6 +12,7 @@
     <string name="no_data_found">No data found.</string>
     <string name="execution_failure">"Execution failed. Error: %s"</string>
     <string name="article_saved">Article saved successfully.</string>
+    <string name="article_already_saved">Article already saved.</string>
     <string name="article_deleted">Article deleted successfully.</string>
 
     <string name="undo">Undo</string>

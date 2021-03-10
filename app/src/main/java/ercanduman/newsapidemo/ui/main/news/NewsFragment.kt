@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
  * @since  27.02.2021
  */
 @AndroidEntryPoint
-class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClicked {
+class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClickListener {
 
     private val viewModel: NewsViewModel by viewModels()
     private val newsAdapter = NewsAdapter(this)
