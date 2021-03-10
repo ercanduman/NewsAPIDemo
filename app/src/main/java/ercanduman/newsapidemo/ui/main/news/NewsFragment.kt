@@ -152,8 +152,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         binding.recyclerView.scrollToPosition(0)
     }
 
-
-    override fun articleClicked(article: Article) {
+    override fun onArticleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
     }

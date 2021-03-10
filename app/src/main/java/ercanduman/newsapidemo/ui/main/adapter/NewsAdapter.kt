@@ -51,10 +51,18 @@ class NewsAdapter(private val onArticleClickListener: OnArticleClickListener) :
 
         init {
             binding.root.setOnClickListener {
-                val adapterPosition = bindingAdapterPosition
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    val currentArticle = getItem(adapterPosition)
-                    if (currentArticle != null) onArticleClickListener.articleClicked(currentArticle)
+                /**
+                 * Check if click item position is valid.
+                 *
+                 * RecyclerView.NO_POSITION is a constant for -1.
+                 *
+                 * If item clicked during deletion or new insertion processes, then it is possible
+                 * that clicked item's position might be invalid which is animating during process.
+                 */
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val currentArticle = getItem(position)
+                    if (currentArticle != null) onArticleClickListener.onArticleClicked(currentArticle)
                 }
             }
         }
@@ -115,9 +123,9 @@ class NewsAdapter(private val onArticleClickListener: OnArticleClickListener) :
     /**
      * This is an interface for listening and forwarding item clicks in fragments.
      *
-     * Fragments will implement this listener and can handle functionality in [articleClicked] method.
+     * Fragments will implement this listener and can handle functionality in [onArticleClicked] method.
      */
     interface OnArticleClickListener {
-        fun articleClicked(article: Article)
+        fun onArticleClicked(article: Article)
     }
 }

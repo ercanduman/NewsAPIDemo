@@ -72,7 +72,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArtic
         }
     }
 
-    override fun articleClicked(article: Article) {
+    override fun onArticleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
     }
