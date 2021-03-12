@@ -7,7 +7,7 @@ import ercanduman.newsapidemo.BuildConfig
  * Utility functions related actions inside app. Extensions functions that prevents duplicated
  * code blocks.
  *
- * @author ercan
+ * @author ercanduman
  * @since  2/27/21
  */
 

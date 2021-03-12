@@ -33,6 +33,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
     private val viewModel: NewsViewModel by viewModels()
     private val newsAdapter = NewsAdapter(this)
+    private lateinit var searchView: SearchView
 
     /**
      * Need to be careful when viewBinding used in a fragment. Because, view of a fragment can be
@@ -69,9 +70,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     private val loadStateAdapter = PagingLoadStateAdapter { newsAdapter.retry() }
 
     private fun handleApiData() {
-        // Display breaking news initially
-        viewModel.getBreakingNewsArticles()
-
         viewModel.articles.observe(viewLifecycleOwner) {
             newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
             showContent(newsAdapter.itemCount > 0)
@@ -97,7 +95,10 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                 binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
                 swipeToRefresh.apply {
                     isRefreshing = progressBar.isVisible
-                    setOnRefreshListener { newsAdapter.retry() }
+                    setOnRefreshListener {
+                        newsAdapter.retry()
+                        isRefreshing = false
+                    }
                 }
             }
         }
@@ -121,8 +122,15 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_news_fragment, menu)
 
-        val searchView: SearchView =
-            menu.findItem(R.id.action_search_news).actionView as SearchView
+        val searchItem = menu.findItem(R.id.action_search_news)
+        searchView = searchItem.actionView as SearchView
+
+        val pendingQuery = viewModel.currentQuery.value
+        if (pendingQuery != null && pendingQuery.isNotEmpty()) {
+            searchItem.expandActionView()
+            searchView.setQuery(pendingQuery, true)
+        }
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean =
                 if (query != null) {
@@ -160,5 +168,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        searchView.setOnQueryTextListener(null)
     }
 }
