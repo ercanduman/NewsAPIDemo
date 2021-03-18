@@ -17,7 +17,7 @@ import ercanduman.newsapidemo.ui.main.news.NewsFragmentDirections
 import ercanduman.newsapidemo.util.snackbarAction
 
 @AndroidEntryPoint
-class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArticleClicked {
+class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArticleClickListener {
 
     private val viewModel: SavedNewsViewModel by viewModels()
     private lateinit var binding: FragmentSavedBinding
@@ -72,7 +72,7 @@ class SavedNewsFragment : Fragment(R.layout.fragment_saved), NewsAdapter.OnArtic
         }
     }
 
-    override fun articleClicked(article: Article) {
+    override fun onArticleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
     }

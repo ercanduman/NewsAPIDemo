@@ -22,7 +22,7 @@ import ercanduman.newsapidemo.databinding.ListItemArticleBinding
  * @author ercanduman
  * @since  27.02.2021
  */
-class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
+class NewsAdapter(private val onArticleClickListener: OnArticleClickListener) :
     PagingDataAdapter<Article, NewsAdapter.NewsViewHolder>(ARTICLE_COMPARATOR) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): NewsViewHolder {
@@ -42,17 +42,27 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
      * ViewHolder is a subclass which holds references to the views. A ViewHolder describes an item
      * view and metadata about its place within the RecyclerView.
      *
-     * "inner" means this class can use outer class' member and fields.
+     * "inner" means this class can use outer class' properties. This makes inner class tightly
+     * coupled to surrounding class, but it is ok because they belong together and viewHolder will
+     * be used only in this particular adapter.
      */
     inner class NewsViewHolder(private val binding: ListItemArticleBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         init {
             binding.root.setOnClickListener {
-                val adapterPosition = bindingAdapterPosition
-                if (adapterPosition != RecyclerView.NO_POSITION) {
-                    val currentArticle = getItem(adapterPosition)
-                    if (currentArticle != null) onArticleClicked.articleClicked(currentArticle)
+                /**
+                 * Check if click item position is valid.
+                 *
+                 * RecyclerView.NO_POSITION is a constant for -1.
+                 *
+                 * If item clicked during deletion or new insertion processes, then it is possible
+                 * that clicked item's position might be invalid which is animating during process.
+                 */
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val currentArticle = getItem(position)
+                    if (currentArticle != null) onArticleClickListener.onArticleClicked(currentArticle)
                 }
             }
         }
@@ -110,7 +120,12 @@ class NewsAdapter(private val onArticleClicked: OnArticleClicked) :
         }
     }
 
-    interface OnArticleClicked {
-        fun articleClicked(article: Article)
+    /**
+     * This is an interface for listening and forwarding item clicks in fragments.
+     *
+     * Fragments will implement this listener and can handle functionality in [onArticleClicked] method.
+     */
+    interface OnArticleClickListener {
+        fun onArticleClicked(article: Article)
     }
 }

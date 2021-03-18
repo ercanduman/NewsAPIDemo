@@ -34,12 +34,19 @@ class DetailsFragment : Fragment(R.layout.fragment_details) {
 
         displayArticle()
         binding.fabSaveArticle.apply {
+            val message: String =
+                if (navigationArgs.article.isSaved) {
+                    setImageResource(R.drawable.ic_bookmark_selected)
+                    getString(R.string.article_already_saved)
+                } else {
+                    getString(R.string.article_saved)
+                }
+
             setOnClickListener {
                 viewModel.saveArticleClicked(navigationArgs.article)
-                it.snackbar(getString(R.string.article_saved))
+                it.snackbar(message)
                 setImageResource(R.drawable.ic_bookmark_selected)
             }
-            if (navigationArgs.article.isSaved) setImageResource(R.drawable.ic_bookmark_selected)
         }
     }
 

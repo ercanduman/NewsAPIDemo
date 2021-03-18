@@ -41,7 +41,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
      *
      * And returns flow of PagingData
      */
-    suspend fun getArticles(): Flow<PagingData<Article>> {
+    suspend fun getBreakingNewsArticles(): Flow<PagingData<Article>> {
         return Pager(
             config = generatePagingConfig(),
             pagingSourceFactory = {
@@ -59,7 +59,7 @@ class AppRepository @Inject constructor(private val api: NewsAPI, private val da
      *
      * And returns flow of PagingData
      */
-    fun searchArticlesPagination(query: String): Flow<PagingData<Article>> {
+    fun searchArticles(query: String): Flow<PagingData<Article>> {
         return Pager(
             config = generatePagingConfig(),
             pagingSourceFactory = {

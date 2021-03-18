@@ -5,21 +5,19 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.View
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
-import ercanduman.newsapidemo.Constants
 import ercanduman.newsapidemo.R
 import ercanduman.newsapidemo.data.network.model.Article
 import ercanduman.newsapidemo.databinding.FragmentNewsBinding
 import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
+import ercanduman.newsapidemo.ui.main.adapter.PagingLoadStateAdapter
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 /**
  * Displays all breaking news articles in RecyclerView. Also contains functionality for searching
@@ -29,10 +27,11 @@ import kotlinx.coroutines.launch
  * @since  27.02.2021
  */
 @AndroidEntryPoint
-class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClicked {
+class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClickListener {
 
     private val viewModel: NewsViewModel by viewModels()
     private val newsAdapter = NewsAdapter(this)
+    private lateinit var searchView: SearchView
 
     /**
      * Need to be careful when viewBinding used in a fragment. Because, view of a fragment can be
@@ -56,39 +55,31 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     }
 
     private fun initRecyclerView() = binding.recyclerView.apply {
-        adapter = newsAdapter
         setHasFixedSize(true)
+        /* If old and new lists have similar items, then these items moves around via animations,
+        * since there is no updating for items, animations can be removed by setting to null. */
         itemAnimator = null
+        adapter = newsAdapter.withLoadStateHeaderAndFooter(
+            header = loadStateAdapter,
+            footer = loadStateAdapter
+        )
     }
 
-    private fun handleApiData() {
-        // Display breaking news initially
-        viewModel.getBreakingNewsArticles()
+    private val loadStateAdapter = PagingLoadStateAdapter { newsAdapter.retry() }
 
+    private fun handleApiData() {
         viewModel.articles.observe(viewLifecycleOwner) {
-            showContent(true)
+            showContent(newsAdapter.itemCount > 0)
             newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
-    private fun showLoading() {
-        binding.progressBar.show()
-        binding.swipeToRefresh.isRefreshing = true
-    }
-
-    private fun hideLoading() {
-        binding.progressBar.hide()
-        binding.swipeToRefresh.isRefreshing = false
-    }
-
     private fun applyRetryOption() {
-        binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
-        // TODO: 2/27/21 apply retry mechanism for -> newsAdapter.withLoadStateHeaderAndFooter()
         newsAdapter.addLoadStateListener { loadState ->
             binding.apply {
                 val isRefresh = loadState.source.refresh
                 when (isRefresh) {
-                    is LoadState.Loading -> showLoading()
+                    is LoadState.Loading -> binding.progressBar.show()
                     is LoadState.NotLoading -> showContent(true)
                     is LoadState.Error -> showContent(false)
                 }
@@ -99,13 +90,21 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                 } else {
                     showContent(true)
                 }
+                binding.buttonRetry.setOnClickListener { newsAdapter.retry() }
+                swipeToRefresh.apply {
+                    isRefreshing = progressBar.isVisible
+                    setOnRefreshListener {
+                        newsAdapter.retry()
+                        isRefreshing = false
+                    }
+                }
             }
         }
     }
 
     private fun showContent(contentAvailable: Boolean = false, message: String = "") {
         binding.apply {
-            if (contentAvailable) {
+            if (contentAvailable && newsAdapter.itemCount > 0) {
                 recyclerView.show()
                 retryContent.hide()
             } else {
@@ -113,7 +112,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
                 retryContent.show()
                 textViewError.text = message
             }
-            hideLoading()
+            progressBar.hide()
         }
     }
 
@@ -121,30 +120,45 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_news_fragment, menu)
 
-        val searchView: SearchView =
-            menu.findItem(R.id.action_search_news).actionView as SearchView
+        val searchItem = menu.findItem(R.id.action_search_news)
+        searchView = searchItem.actionView as SearchView
+
+        val pendingQuery = viewModel.currentQuery.value
+        if (pendingQuery != null && pendingQuery.isNotEmpty()) {
+            searchItem.expandActionView()
+            searchView.setQuery(pendingQuery, true)
+        }
+
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean = false
-            override fun onQueryTextChange(newText: String?): Boolean = searchForArticles(newText)
+            override fun onQueryTextSubmit(query: String?): Boolean =
+                if (query != null) {
+                    /**
+                     * Hide keyboard after submit button clicked.
+                     */
+                    searchView.clearFocus()
+                    searchForArticles(query)
+                    true
+                } else false
+
+            override fun onQueryTextChange(newText: String?): Boolean = false
         })
     }
 
-    private fun searchForArticles(newText: String?) =
-        if (newText != null && newText.length > 3) {
-            /**
-             * If text is not null and has at least 3 characters, then wait for a little
-             * and call API for new search query.
-             *
-             * This way api will not called for every characters written to search field.
-             */
-            viewLifecycleOwner.lifecycleScope.launch {
-                delay(Constants.SEARCH_TIME_DELAY)
-                viewModel.searchArticlesPaging(newText)
-            }
-            true
-        } else false
+    /**
+     * Search for articles when submit button clicked. This way api will not called for every
+     * character written to search field.
+     */
+    private fun searchForArticles(newText: String) {
+        viewModel.searchArticlesPaging(newText)
 
-    override fun articleClicked(article: Article) {
+        /**
+         *  If old and new lists have similar items, it can happen that scroll position stays
+         *  same. scrollToPosition is make sure that always jump to the top.
+         */
+        binding.recyclerView.scrollToPosition(0)
+    }
+
+    override fun onArticleClicked(article: Article) {
         val action = NewsFragmentDirections.globalActionNavigateToDetailsFragment(article)
         findNavController().navigate(action)
     }
@@ -152,5 +166,6 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        searchView.setOnQueryTextListener(null)
     }
 }
