@@ -8,7 +8,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,7 +18,6 @@ import ercanduman.newsapidemo.ui.main.adapter.NewsAdapter
 import ercanduman.newsapidemo.ui.main.adapter.PagingLoadStateAdapter
 import ercanduman.newsapidemo.util.hide
 import ercanduman.newsapidemo.util.show
-import kotlinx.coroutines.launch
 
 /**
  * Displays all breaking news articles in RecyclerView. Also contains functionality for searching
@@ -71,8 +69,8 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
 
     private fun handleApiData() {
         viewModel.articles.observe(viewLifecycleOwner) {
-            newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
             showContent(newsAdapter.itemCount > 0)
+            newsAdapter.submitData(viewLifecycleOwner.lifecycle, it)
         }
     }
 
@@ -151,7 +149,7 @@ class NewsFragment : Fragment(R.layout.fragment_news), NewsAdapter.OnArticleClic
      * character written to search field.
      */
     private fun searchForArticles(newText: String) {
-        viewLifecycleOwner.lifecycleScope.launch { viewModel.searchArticlesPaging(newText) }
+        viewModel.searchArticlesPaging(newText)
 
         /**
          *  If old and new lists have similar items, it can happen that scroll position stays
